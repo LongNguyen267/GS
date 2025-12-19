@@ -1,30 +1,41 @@
-﻿@model IEnumerable<GameStore.Models.Product>
+﻿@* 1. QUAN TRỌNG: Phải thêm dòng này để dùng được hàm tạo Slug *@
+@using GameStore.Helpers
+
+@model IEnumerable<GameStore.Models.Product>
 
 <div class="product-grid-display">
     @foreach (var product in Model)
     {
         <div class="product-card">
-            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="product-image-link">
+            @* 2. SỬA LINK ẢNH: Dùng href thủ công chuẩn SEO *@
+            <a href="/san-pham/@SlugHelper.GenerateSlug(product.Name)-@product.Id" class="product-image-link">
+
                 @if (!string.IsNullOrEmpty(product.Status) && product.Status.Equals("Sale", StringComparison.OrdinalIgnoreCase))
                 {
                     <span class="product-tag tag-sale">Giảm giá</span>
                 }
-                <img src="@Url.Content(product.ImageUrl ?? "~/image/default-product.png")" alt="@product.Name">
+
+                @* Thêm loading="lazy" để tối ưu tốc độ tải trang cho SEO *@
+                <img src="@Url.Content(product.ImageUrl ?? "~/image/default-product.png")" alt="@product.Name" loading="lazy">
             </a>
+
             <div class="product-card-content">
-                <h3><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">@product.Name</a></h3>
+                @* 3. SỬA LINK TIÊU ĐỀ: Cũng dùng href thủ công chuẩn SEO *@
+                <h3>
+                    <a href="/san-pham/@SlugHelper.GenerateSlug(product.Name)-@product.Id">
+                        @product.Name
+                    </a>
+                </h3>
+
                 <div class="price">@product.Price.ToString("N0")đ</div>
 
-                @* --- BƯỚC 1: THÊM ĐIỀU KIỆN KIỂM TRA TRANG HIỆN TẠI --- *@
-                @* Code này sẽ kiểm tra xem Controller có phải là "Home" không *@
-                @if (ViewContext.RouteData.Values["controller"].ToString() != "Home")
+                @* Giữ nguyên logic ẩn nút giỏ hàng ở trang chủ *@
+                @if (ViewContext.RouteData.Values["controller"]?.ToString() != "Home")
                 {
-                    @* --- BƯỚC 2: NÚT CHỈ HIỂN THỊ NẾU KHÔNG PHẢI TRANG CHỦ --- *@
                     <button type="button" class="add-cart-btn" data-product-id="@product.Id">
                         <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
                     </button>
                 }
-                @* Nếu là trang chủ, nút sẽ được bỏ qua và không hiển thị *@
             </div>
         </div>
     }

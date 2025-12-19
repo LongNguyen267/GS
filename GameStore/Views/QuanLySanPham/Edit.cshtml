@@ -5,56 +5,85 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="crud-container">
-    <h1>Chỉnh sửa sản phẩm</h1>
-    <hr />
-    <div class="row">
-        <div class="col-md-12">
-            <form asp-action="Edit" class="crud-form">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="Sku" />
-                <input type="hidden" asp-for="ImageUrl" />
-                <input type="hidden" asp-for="Specifications" />
-                <input type="hidden" asp-for="ImportPrice" />
-                <div class="form-group mt-3">
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-3">
-                    <label asp-for="Price" class="control-label"></label>
-                    <input asp-for="Price" class="form-control" />
-                    <span asp-validation-for="Price" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-3">
-                    <label asp-for="StockQuantity" class="control-label"></label>
-                    <input asp-for="StockQuantity" class="form-control" />
-                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-3">
-                    <label asp-for="Status" class="control-label"></label>
-                    <input asp-for="Status" class="form-control" />
-                    <span asp-validation-for="Status" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-3">
-                    <label asp-for="Description" class="control-label"></label>
-                    <textarea asp-for="Description" class="form-control" rows="5"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-3">
-                    <label asp-for="BrandId" class="control-label">Nhà cung cấp</label>
-                    <select asp-for="BrandId" class="form-control" asp-items="@(new SelectList(ViewBag.Brands, "Id", "Name"))"></select>
-                </div>
-                <div class="form-group mt-3">
-                    <label asp-for="CategoryId" class="control-label">Loại sản phẩm</label>
-                    <select asp-for="CategoryId" class="form-control" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))"></select>
-                </div>
-                <div class="form-group mt-3">
-                    <input type="submit" value="Lưu" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
-                </div>
-            </form>
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Cập Nhật Sản Phẩm</h1>
+    <a asp-action="Index" class="btn btn-secondary btn-sm shadow-sm">
+        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow mb-4 border-left-warning">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">Thông tin sản phẩm: @Model.Name</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Sku" />
+                    <input type="hidden" asp-for="ImageUrl" />
+                    <input type="hidden" asp-for="Specifications" />
+                    <input type="hidden" asp-for="ImportPrice" />
+                    <input type="hidden" asp-for="CreatedAt" />
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label asp-for="Name" class="form-label font-weight-bold">Tên sản phẩm</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="BrandId" class="form-label font-weight-bold">Nhà cung cấp</label>
+                            <select asp-for="BrandId" class="form-select" asp-items="@(new SelectList(ViewBag.Brands, "Id", "Name"))"></select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CategoryId" class="form-label font-weight-bold">Loại sản phẩm</label>
+                            <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))"></select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="StockQuantity" class="form-label font-weight-bold">Tồn kho</label>
+                            <input asp-for="StockQuantity" class="form-control" />
+                            <span asp-validation-for="StockQuantity" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Price" class="form-label font-weight-bold text-success">Giá bán</label>
+                            <div class="input-group">
+                                <input asp-for="Price" class="form-control" />
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Status" class="form-label font-weight-bold">Trạng thái</label>
+                            <input asp-for="Status" class="form-control" />
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label font-weight-bold">Mô tả chi tiết</label>
+                        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-warning px-4 shadow-sm">
+                            <i class="fas fa-save me-1"></i> Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

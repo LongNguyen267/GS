@@ -1,0 +1,67 @@
+﻿@model GameStore.Models.User
+
+@{
+    ViewData["Title"] = "Sửa thông tin khách hàng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Cập Nhật Khách Hàng</h1>
+    <a asp-action="Index" class="btn btn-secondary btn-sm shadow-sm">
+        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4 border-left-warning">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">Thông tin tài khoản: @Model.FullName</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <input type="hidden" asp-for="CreatedAt" />
+                    <input type="hidden" asp-for="Password" />
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label font-weight-bold">Họ và tên</label>
+                        <input asp-for="FullName" class="form-control" required />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label font-weight-bold">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" required />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label font-weight-bold">Số điện thoại</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    @* <div class="mb-3">
+                        <label asp-for="Address" class="form-label font-weight-bold">Địa chỉ</label>
+                        <input asp-for="Address" class="form-control" />
+                    </div> 
+                    *@
+
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle"></i> Mật khẩu và Lịch sử mua hàng không thể chỉnh sửa tại đây.
+                    </div>
+
+                    <hr>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-warning px-4 shadow-sm">
+                            <i class="fas fa-save me-1"></i> Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

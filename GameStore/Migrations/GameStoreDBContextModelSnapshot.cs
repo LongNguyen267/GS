@@ -42,7 +42,7 @@ namespace GameStore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("GameStore.Models.Cart", b =>
@@ -68,7 +68,7 @@ namespace GameStore.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("GameStore.Models.CartItem", b =>
@@ -102,7 +102,7 @@ namespace GameStore.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("GameStore.Models.Category", b =>
@@ -127,7 +127,7 @@ namespace GameStore.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("GameStore.Models.Discount", b =>
@@ -168,34 +168,7 @@ namespace GameStore.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Discounts", (string)null);
-                });
-
-            modelBuilder.Entity("GameStore.Models.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("GameStore.Models.Order", b =>
@@ -255,7 +228,7 @@ namespace GameStore.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("GameStore.Models.OrderDetail", b =>
@@ -278,7 +251,7 @@ namespace GameStore.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("GameStore.Models.OrderStatusHistory", b =>
@@ -350,7 +323,7 @@ namespace GameStore.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("PasswordResetTokens", (string)null);
+                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("GameStore.Models.Product", b =>
@@ -424,7 +397,7 @@ namespace GameStore.Migrations
                     b.HasIndex("Sku")
                         .IsUnique();
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("GameStore.Models.ProductImage", b =>
@@ -458,7 +431,7 @@ namespace GameStore.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("GameStore.Models.Review", b =>
@@ -496,7 +469,7 @@ namespace GameStore.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("GameStore.Models.Role", b =>
@@ -518,7 +491,7 @@ namespace GameStore.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("GameStore.Models.User", b =>
@@ -563,7 +536,7 @@ namespace GameStore.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("GameStore.Models.UserRole", b =>
@@ -580,7 +553,7 @@ namespace GameStore.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("GameStore.Models.Cart", b =>

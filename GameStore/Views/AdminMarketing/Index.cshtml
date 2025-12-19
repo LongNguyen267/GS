@@ -1,0 +1,130 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Email Marketing";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">
+        <i class="fas fa-mail-bulk me-2 text-primary"></i>Chiến Dịch Marketing
+    </h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-xl-10 col-lg-12">
+
+        <div class="card shadow mb-4 border-left-primary">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-edit me-1"></i> Soạn Thảo Chiến Dịch Mới
+                </h6>
+                <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="alert alert-info border-0 shadow-sm mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="font-35 text-info me-3"><i class="fas fa-info-circle fa-2x"></i></div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Thông tin gửi:</h6>
+                            <div class="small">Email sẽ được gửi đến <strong>tất cả khách hàng</strong> có trong hệ thống. Quá trình này có thể mất vài phút.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-action="SendMarketingEmail" asp-controller="AdminMarketing" method="post" id="marketingForm">
+
+                    <div class="mb-4">
+                        <label class="form-label font-weight-bold text-gray-800">
+                            Tiêu đề Email <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="fas fa-heading"></i></span>
+                            <input type="text" name="subject" class="form-control form-control-lg" placeholder="Ví dụ: SALE SẬP SÀN - GIẢM 50% TOÀN BỘ GAME" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label font-weight-bold text-gray-800">
+                            Nội dung thông báo <span class="text-danger">*</span>
+                        </label>
+                        <textarea name="content" class="form-control" rows="10" placeholder="Nhập nội dung chi tiết..." required style="border: 2px solid #e3e6f0;"></textarea>
+                    </div>
+
+                    <hr class="sidebar-divider">
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="reset" class="btn btn-secondary btn-icon-split">
+                            <span class="icon text-white-50"><i class="fas fa-redo"></i></span>
+                            <span class="text">Làm mới</span>
+                        </button>
+
+                        <button type="submit" class="btn btn-primary btn-icon-split btn-lg shadow-sm" onclick="showLoading()">
+                            <span class="icon text-white-50"><i class="fas fa-paper-plane"></i></span>
+                            <span class="text">Gửi Chiến Dịch Ngay</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // --- LOGIC HIỂN THỊ THÔNG BÁO TỪ SERVER ---
+        // Lấy thông báo từ TempData (do Controller gửi về)
+        var successMsg = @Json.Serialize(TempData["SuccessMessage"]);
+        var errorMsg = @Json.Serialize(TempData["ErrorMessage"]);
+
+        // Nếu có tin nhắn Thành công -> Hiện Popup Xanh
+        if (successMsg) {
+            Swal.fire({
+                title: 'Thành công rực rỡ!',
+                text: successMsg,
+                icon: 'success',
+                confirmButtonColor: '#4e73df',
+                confirmButtonText: 'Tuyệt vời'
+            });
+        }
+
+        // Nếu có lỗi -> Hiện Popup Đỏ
+        if (errorMsg) {
+            Swal.fire({
+                title: 'Opps! Có lỗi rồi',
+                text: errorMsg,
+                icon: 'error',
+                confirmButtonColor: '#e74a3b',
+                confirmButtonText: 'Để tôi kiểm tra lại'
+            });
+        }
+
+        // --- HIỆU ỨNG LOADING KHI BẤM GỬI ---
+        function showLoading() {
+            var subject = document.querySelector('input[name="subject"]').value;
+            var content = document.querySelector('textarea[name="content"]').value;
+
+            // Chỉ hiện loading khi người dùng đã nhập đủ thông tin
+            if(subject.trim() !== "" && content.trim() !== "") {
+                let timerInterval;
+                Swal.fire({
+                    title: 'Đang gửi email...',
+                    html: 'Hệ thống đang gửi thư đến từng khách hàng.<br><b>Vui lòng không tắt trình duyệt!</b>',
+                    timerProgressBar: true,
+                    allowOutsideClick: false, // Không cho click ra ngoài
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            }
+        }
+    </script>
+}

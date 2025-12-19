@@ -9,7 +9,7 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/checkout.css" />
     <style>
-        /* CSS bổ sung cho phần thanh toán */
+        /* CSS bổ sung cho phần thanh toán đẹp hơn */
         .payment-method-box {
             display: flex;
             align-items: center;
@@ -43,18 +43,6 @@
                 width: 30px;
                 text-align: center;
             }
-
-        /* [MỚI] CSS cho khung nhập voucher */
-        .voucher-box {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #ddd;
-        }
-
-        .input-group-voucher {
-            display: flex;
-            gap: 5px;
-        }
     </style>
 }
 
@@ -74,8 +62,6 @@
     else
     {
         <form asp-controller="Checkout" asp-action="PlaceOrder" method="post" id="checkout-form">
-            <input type="hidden" asp-for="VoucherCode" id="hiddenVoucherCode" />
-
             <div class="checkout-layout">
 
                 <div class="customer-details">
@@ -143,26 +129,11 @@
                             }
                         </ul>
 
-                        <div class="voucher-box">
-                            <label style="font-size: 14px; font-weight: 500; margin-bottom: 5px; display: block;">Mã ưu đãi</label>
-                            <div class="input-group-voucher">
-                                <input type="text" id="voucherInput" class="form-control" placeholder="Nhập mã giảm giá (nếu có)" style="font-size: 14px;">
-                                <button type="button" id="btnApplyVoucher" class="btn btn-outline-primary" style="white-space: nowrap;">Áp dụng</button>
-                            </div>
-                            <div id="voucherMessage" style="font-size: 13px; margin-top: 5px;"></div>
-                        </div>
-
                         <div class="order-total">
                             <div class="total-row">
                                 <span>Tạm tính</span>
                                 <span>@total.ToString("N0")đ</span>
                             </div>
-
-                            <div class="total-row text-success" id="discountRow" style="display:none !important">
-                                <span>Giảm giá</span>
-                                <span id="discountAmount">-0đ</span>
-                            </div>
-
                             <div class="total-row">
                                 <span>Phí vận chuyển</span>
                                 <span>0đ</span>
@@ -170,7 +141,7 @@
                             <hr />
                             <div class="total-row grand-total">
                                 <span>Tổng thanh toán</span>
-                                <span class="final-price" id="finalTotal">@total.ToString("N0")đ</span>
+                                <span class="final-price">@total.ToString("N0")đ</span>
                             </div>
                         </div>
 
@@ -190,67 +161,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        $(document).ready(function() {
-            $('#btnApplyVoucher').click(function() {
-                var code = $('#voucherInput').val().trim();
-                // Lấy giá trị tổng tiền gốc từ biến Razor (Server render ra số luôn)
-                var originalTotal = parseFloat("@total.ToString(System.Globalization.CultureInfo.InvariantCulture)");
-
-                if(!code) {
-                    toastr.warning("Vui lòng nhập mã giảm giá!");
-                    return;
-                }
-
-                // Hiệu ứng loading nút bấm
-                var $btn = $(this);
-                $btn.prop('disabled', true).text('Đang check...');
-
-                $.ajax({
-                    url: '/Checkout/ApplyVoucher',
-                    type: 'POST',
-                    data: { code: code, currentTotal: originalTotal },
-                    success: function(res) {
-                        $btn.prop('disabled', false).text('Áp dụng');
-
-                        if(res.success) {
-                            // 1. Thông báo thành công
-                            toastr.success(res.message);
-                            $('#voucherMessage').text(res.message)
-                                                .removeClass('text-danger')
-                                                .addClass('text-success');
-
-                            // 2. Cập nhật giao diện số tiền
-                            $('#discountRow').css('display', 'flex'); // Hiện dòng giảm giá
-                            $('#discountAmount').text('-' + res.discountAmount.toLocaleString('vi-VN') + 'đ');
-                            $('#finalTotal').text(res.newTotal.toLocaleString('vi-VN') + 'đ');
-
-                            // 3. Gán mã vào input ẩn để gửi đi khi submit form
-                            $('#hiddenVoucherCode').val(code);
-
-                            // 4. Khóa ô nhập để tránh sửa đổi linh tinh (Optional)
-                            // $('#voucherInput').prop('readonly', true);
-                            // $btn.hide();
-                        } else {
-                            // Thông báo lỗi
-                            toastr.error(res.message);
-                            $('#voucherMessage').text(res.message)
-                                                .removeClass('text-success')
-                                                .addClass('text-danger');
-
-                            // Reset về mặc định
-                            $('#discountRow').hide();
-                            $('#finalTotal').text(originalTotal.toLocaleString('vi-VN') + 'đ');
-                            $('#hiddenVoucherCode').val('');
-                        }
-                    },
-                    error: function() {
-                        $btn.prop('disabled', false).text('Áp dụng');
-                        toastr.error("Có lỗi xảy ra, vui lòng thử lại!");
-                    }
-                });
-            });
-        });
-    </script>
 }

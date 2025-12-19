@@ -1,14 +1,95 @@
 ﻿@model GameStore.ViewModels.EmployeeDashboardViewModel
 
 @{
-	ViewData["Title"] = "Dashboard Tổng quan";
-	Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+    ViewData["Title"] = "Dashboard Nhân viên";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
 }
 
-<div class="container py-5">
-	<div class="dashboard-content">
-		<h1>Chào mừng đến với Dashboard nhân viên</h1>
-		<hr />
-		<p>Sử dụng thanh điều hướng để xem và quản lý đơn hàng.</p>
-	</div>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800" style="color: #1cc88a; font-weight: 700;">Không gian làm việc</h1>
+    <span class="d-none d-sm-inline-block text-gray-600 small">
+        <i class="fas fa-clock"></i> @DateTime.Now.ToString("dd/MM/yyyy")
+    </span>
 </div>
+
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow mb-4 border-left-success">
+            <div class="card-body p-5">
+                <div class="row align-items-center">
+                    <div class="col-md-7">
+                        <h2 class="text-success font-weight-bold mb-3">Xin chào, @(User.Identity?.Name ?? "Đồng nghiệp")!</h2>
+                        <p class="lead text-gray-800">Chúc bạn một ngày làm việc hiệu quả.</p>
+                        <p class="mb-4">
+                            Đây là bảng điều khiển dành cho nhân viên. Hãy chọn tác vụ bạn muốn thực hiện bên dưới hoặc sử dụng menu bên trái.
+                        </p>
+                        <a asp-controller="EmployeeNhapHang" asp-action="Index" class="btn btn-success btn-lg shadow-sm">
+                            <i class="fas fa-plus-circle mr-2"></i> Tạo phiếu nhập mới
+                        </a>
+                    </div>
+                    <div class="col-md-5 text-center d-none d-md-block">
+                        <img class="img-fluid" src="https://cdni.iconscout.com/illustration/premium/thumb/warehouse-workers-checking-stock-illustration-download-in-svg-png-gif-file-formats--inventory-management-check-logistics-delivery-pack-business-activities-illustrations-3791285.png" alt="Working" style="max-height: 250px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5 class="mb-3 text-gray-800 font-weight-bold ml-2">Truy cập nhanh</h5>
+<div class="row">
+    <div class="col-xl-6 col-md-6 mb-4">
+        <a asp-controller="EmployeeNhapHang" asp-action="Index" class="text-decoration-none">
+            <div class="card-stat border-left-primary h-100 py-3 card-hover-effect">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                KHO VẬN
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Quản lý Nhập Hàng</div>
+                            <small class="text-muted">Tạo phiếu nhập, xem lịch sử nhập kho</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dolly fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-6 col-md-6 mb-4">
+        <a asp-controller="AdminDonHang" asp-action="Index" class="text-decoration-none">
+            <div class="card-stat border-left-warning h-100 py-3 card-hover-effect">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                BÁN HÀNG
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Danh sách Đơn Hàng</div>
+                            <small class="text-muted">Kiểm tra đơn mới, cập nhật trạng thái</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shipping-fast fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Hiệu ứng hover nhẹ cho các card shortcut */
+    .card-hover-effect {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .card-hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+            cursor: pointer;
+        }
+</style>

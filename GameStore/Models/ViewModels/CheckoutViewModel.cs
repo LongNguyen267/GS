@@ -20,6 +20,5 @@ namespace GameStore.ViewModels
         public string PaymentMethod { get; set; } = null!;
 
         public List<CheckoutController.CartItem> CartItems { get; set; } = new List<CheckoutController.CartItem>();
-        public string? VoucherCode { get; set; }
     }
 }

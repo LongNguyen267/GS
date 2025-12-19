@@ -1,31 +1,45 @@
-﻿@* BƯỚC 1: Khai báo Model mà View này sẽ sử dụng *@
+﻿@using GameStore.Helpers
 @model GameStore.ViewModels.ProductDetailsViewModel
 
 @{
+    // --- PHẦN 1: XỬ LÝ SEO (QUAN TRỌNG) ---
     ViewData["Title"] = Model.MainProduct.Name;
+
+    // 1. Xử lý mô tả: Loại bỏ thẻ HTML (nếu có) và cắt ngắn
+    string rawDesc = System.Text.RegularExpressions.Regex.Replace(Model.MainProduct.Description ?? "", "<.*?>", String.Empty);
+    string shortDesc = rawDesc.Length > 150 ? rawDesc.Substring(0, 147) + "..." : rawDesc;
+
+    // 2. Tạo câu mô tả hấp dẫn (Tên + Giá + Mô tả ngắn)
+    string metaDesc = $"Mua {Model.MainProduct.Name} chính hãng giá rẻ chỉ {Model.MainProduct.Price.ToString("N0")}đ tại Chill Game Store. {shortDesc}";
+    ViewData["MetaDescription"] = metaDesc;
+
+    // 3. Từ khóa (Tên sản phẩm + Thương hiệu)
+    ViewData["MetaKeywords"] = $"{Model.MainProduct.Name}, mua {Model.MainProduct.Name}, {Model.MainProduct.Brand?.Name ?? "game store"}";
+
+    // 4. Ảnh đại diện khi chia sẻ Facebook/Zalo
+    ViewData["OgImage"] = Url.Content("~" + Model.MainImageUrl);
+    // ----------------------------------------
 }
 
 <div class="product-detail-container">
+    @* --- CỘT TRÁI: HÌNH ẢNH --- *@
     <div class="product-images">
         <div class="thumbnail-list">
-            @* BƯỚC 2: Dùng vòng lặp để hiển thị tất cả ảnh thumbnail *@
             @foreach (var imageUrl in Model.AllImageUrls)
             {
                 <img src="@Url.Content("~" + imageUrl)" alt="Thumbnail for @Model.MainProduct.Name" class="thumbnail" onclick="changeImage(this)">
             }
         </div>
         <div class="main-image">
-            @* Hiển thị ảnh chính của sản phẩm *@
             <img src="@Url.Content("~" + Model.MainImageUrl)" alt="@Model.MainProduct.Name" id="mainProductImage">
         </div>
     </div>
 
+    @* --- CỘT PHẢI: THÔNG TIN --- *@
     <div class="product-info">
-        @* BƯỚC 3: Hiển thị thông tin chi tiết của sản phẩm *@
         <h1 class="product-name">@Model.MainProduct.Name</h1>
 
         <div class="product-rating">
-            @* Dùng vòng lặp để hiển thị số sao đánh giá *@
             @for (int i = 1; i <= 5; i++)
             {
                 <span>@(i <= Model.AverageRating ? '⭐' : '☆')</span>
@@ -60,7 +74,6 @@
 </div>
 
 <div class="product-additional-details container">
-
     <div class="product-description-full">
         <h3>Mô tả chi tiết sản phẩm</h3>
         @Html.Raw(Model.MainProduct.Description)
@@ -70,10 +83,9 @@
         <h3>Thông số kỹ thuật</h3>
         @Html.Raw(Model.MainProduct.Specifications)
     </div>
-
 </div>
 
-
+@* --- PHẦN SẢN PHẨM LIÊN QUAN (ĐÃ SỬA LINK SEO) --- *@
 @if (Model.RelatedProducts.Any())
 {
     <div class="related-products-section">
@@ -82,8 +94,9 @@
             @foreach (var relatedProd in Model.RelatedProducts)
             {
                 <div class="related-product-card">
-                    <a href="@Url.Action("Details", "Products", new { id = relatedProd.Id })">
-                        <img src="@Url.Content("~" + (relatedProd.ImageUrl ?? "/images/placeholder.png"))" alt="@relatedProd.Name">
+                    @* SỬA LINK Ở ĐÂY: Dùng SlugHelper thay vì Url.Action *@
+                    <a href="/san-pham/@SlugHelper.GenerateSlug(relatedProd.Name)-@relatedProd.Id">
+                        <img src="@Url.Content("~" + (relatedProd.ImageUrl ?? "/images/placeholder.png"))" alt="@relatedProd.Name" loading="lazy">
                         <h3>@relatedProd.Name</h3>
                         <p class="price">@relatedProd.Price.ToString("N0")₫</p>
                     </a>
@@ -92,7 +105,7 @@
         </div>
     </div>
 }
-@* Khu vực hiển thị các nút tùy chọn/phụ kiện *@
+
 @if (Model.OptionCategories.Any())
 {
     <div class="options-section">
@@ -109,29 +122,56 @@
 }
 
 @section Scripts {
-    <script>
-        // BƯỚC 4: Đơn giản hóa JavaScript
-        function changeImage(thumbnailElement) {
-            // Chỉ cần lấy src từ thumbnail được click và gán cho ảnh chính
-            document.getElementById('mainProductImage').src = thumbnailElement.src;
+    @* --- PHẦN 2: SCHEMA MARKUP (VŨ KHÍ BÍ MẬT CỦA SEO) --- *@
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org/",
+          "@@type": "Product",
+          "name": "@Model.MainProduct.Name",
+          "image": [
+            "@Url.Content("~" + Model.MainImageUrl)"
+           ],
+          "description": "@shortDesc",
+          "brand": {
+            "@@type": "Brand",
+            "name": "@(Model.MainProduct.Brand?.Name ?? "GameStore")"
+          },
+          "sku": "@Model.MainProduct.Id",
+          "offers": {
+            "@@type": "Offer",
+            "url": "@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path",
+            "priceCurrency": "VND",
+            "price": "@Model.MainProduct.Price",
+            "availability": "@(Model.MainProduct.StockQuantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock")",
+            "itemCondition": "https://schema.org/NewCondition"
+          },
+          "aggregateRating": {
+            "@@type": "AggregateRating",
+            "ratingValue": "@(Model.AverageRating > 0 ? Model.AverageRating : 5)",
+            "reviewCount": "@(Model.ReviewCount > 0 ? Model.ReviewCount : 1)"
+          }
+        }
+    </script>
 
-            // Xóa và thêm class 'active' để làm nổi bật thumbnail đang được chọn
+    @* --- JAVASCRIPT XỬ LÝ GIAO DIỆN --- *@
+    <script>
+        function changeImage(thumbnailElement) {
+            document.getElementById('mainProductImage').src = thumbnailElement.src;
             document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
             thumbnailElement.classList.add('active');
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Tự động đánh dấu active cho thumbnail đầu tiên khi tải trang
+            // Tự động chọn thumbnail đầu tiên
             const firstThumbnail = document.querySelector('.thumbnail');
             if(firstThumbnail) {
                 firstThumbnail.classList.add('active');
             }
 
+            // Xử lý tăng giảm số lượng
             const decreaseBtn = document.getElementById('decrease-qty');
             const increaseBtn = document.getElementById('increase-qty');
-
             const quantityInput = document.getElementById('quantity-input');
-
             const stock = parseInt(quantityInput.getAttribute('data-stock'));
 
             decreaseBtn.addEventListener('click', function () {
@@ -143,7 +183,6 @@
 
             increaseBtn.addEventListener('click', function () {
                 let currentValue = parseInt(quantityInput.value);
-                // Kiểm tra xem số lượng có vượt quá tồn kho không
                 if (currentValue < stock) {
                     quantityInput.value = currentValue + 1;
                 } else {
@@ -151,7 +190,7 @@
                 }
             });
 
-            // Xử lý chọn option (giữ nguyên)
+            // Xử lý nút chọn Option (CSS visual only)
             const optionButtons = document.querySelectorAll('.option-btn');
             optionButtons.forEach(button => {
                 button.addEventListener('click', function () {

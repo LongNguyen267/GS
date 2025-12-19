@@ -7,38 +7,109 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container py-5">
-    <div class="dashboard-content">
-        <h1>Chào mừng đến với trang Admin</h1>
-        <hr />
-        <p>Chọn chức năng từ thanh điều hướng để bắt đầu quản lý hệ thống.</p>
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Tổng Quan Hệ Thống</h1>
+</div>
 
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card text-white bg-primary mb-3">
-                    <div class="card-header">Tổng doanh thu hôm nay</div>
-                    <div class="card-body">
-                        <h4 class="card-title">@Model.DailyRevenue.ToString("C0", new CultureInfo("vi-VN"))</h4>
-                        <p class="card-text">Dữ liệu được cập nhật mới nhất.</p>
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Doanh thu (Tháng này)
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.MonthlyRevenue.ToString("C0", new CultureInfo("vi-VN"))
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-success mb-3">
-                    <div class="card-header">Tổng số đơn hàng mới</div>
-                    <div class="card-body">
-                        <h4 class="card-title">@Model.NewOrdersCount</h4>
-                        <p class="card-text">Đơn hàng đang chờ xử lý.</p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Tổng doanh thu
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.TotalRevenue.ToString("C0", new CultureInfo("vi-VN"))
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-info mb-3">
-                    <div class="card-header">Tổng số sản phẩm</div>
-                    <div class="card-body">
-                        <h4 class="card-title">@Model.TotalProductsCount</h4>
-                        <p class="card-text">Toàn bộ sản phẩm trong kho.</p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Đơn Hàng Mới
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.NewOrdersCount
+                        </div>
                     </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Tổng Sản Phẩm
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.TotalProductsCount
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-box-open fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Trung tâm quản trị</h6>
+            </div>
+            <div class="card-body text-center">
+                <img src="https://cdni.iconscout.com/illustration/premium/thumb/web-admin-4393666-3645396.png" alt="Admin Welcome" style="width: 300px; max-width: 100%; margin-bottom: 20px;">
+                <h4>Chào mừng, @User.Identity.Name!</h4>
+                <p class="text-muted">Hệ thống đang hoạt động ổn định. Đã có <strong>@Model.TotalCustomersCount</strong> khách hàng đăng ký.</p>
+                <div class="mt-4">
+                    <a asp-controller="AdminDonHang" asp-action="Index" class="btn btn-primary shadow-sm mx-2">
+                        <i class="fas fa-clipboard-check me-2"></i>Xử lý đơn hàng
+                    </a>
+                    <a asp-controller="AdminMarketing" asp-action="Index" class="btn btn-success shadow-sm mx-2">
+                        <i class="fas fa-mail-bulk me-2"></i>Gửi Email Marketing
+                    </a>
                 </div>
             </div>
         </div>

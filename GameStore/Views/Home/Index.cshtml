@@ -1,12 +1,13 @@
-﻿@* BƯỚC QUAN TRỌNG NHẤT: Khai báo ViewModel để View có thể nhận dữ liệu từ Controller *@
+﻿@using GameStore.Helpers
 @model GameStore.ViewModels.HomeViewModel
 
 @{
-    ViewData["Title"] = "Trang chủ";
+    ViewData["Title"] = "Trang chủ - Máy Game, Đĩa Game & Phụ Kiện Chính Hãng";
+    ViewData["MetaDescription"] = "Chill Game Store chuyên cung cấp máy PS5, Nintendo Switch, Xbox và hàng ngàn đĩa game bản quyền giá rẻ nhất thị trường.";
 }
 
 <main>
-    @* --- PHẦN SLIDER HERO CỦA BẠN (GIỮ NGUYÊN) --- *@
+    @* --- PHẦN SLIDER HERO --- *@
     <section class="hero">
         <div class="slider-container">
             <div class="slide active" data-slide="0">
@@ -15,7 +16,18 @@
                 <div class="slide-content">
                     <p>Máy Game mạnh mẽ nhất</p>
                     <h1>PS5 / PS5 Pro</h1>
-                    <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("Sony PlayStation 5 (PS5) Standard Edition"))14" class="cta-button">Mua Ngay</a>
+                    @* SỬA LINK: Tìm sản phẩm và tạo link slug *@
+                    @{
+                        var ps5 = Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("PlayStation 5") || p.Name.Contains("PS5"));
+                        if (ps5 != null)
+                        {
+                            <a href="/san-pham/@SlugHelper.GenerateSlug(ps5.Name)-@ps5.Id" class="cta-button">Mua Ngay</a>
+                        }
+                        else
+                        {
+                            <a href="/Products?type=MayGame" class="cta-button">Mua Ngay</a>
+                        }
+                    }
                 </div>
             </div>
             <div class="slide" data-slide="1">
@@ -24,7 +36,17 @@
                 <div class="slide-content">
                     <p>Hiệu năng không đối thủ</p>
                     <h1>Xbox Series X</h1>
-                    <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("Microsoft Xbox Series X 1TB"))5" class="cta-button">Khám phá</a>
+                    @{
+                        var xbox = Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("Xbox Series X"));
+                        if (xbox != null)
+                        {
+                            <a href="/san-pham/@SlugHelper.GenerateSlug(xbox.Name)-@xbox.Id" class="cta-button">Khám phá</a>
+                        }
+                        else
+                        {
+                            <a href="/Products?type=MayGame" class="cta-button">Khám phá</a>
+                        }
+                    }
                 </div>
             </div>
             <div class="slide" data-slide="2">
@@ -33,7 +55,17 @@
                 <div class="slide-content">
                     <p>Chơi game mọi lúc, mọi nơi</p>
                     <h1>Nintendo Switch</h1>
-                    <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("Nintendo Switch 2"))17" class="cta-button">Xem chi tiết</a>
+                    @{
+                        var switchConsole = Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("Nintendo Switch"));
+                        if (switchConsole != null)
+                        {
+                            <a href="/san-pham/@SlugHelper.GenerateSlug(switchConsole.Name)-@switchConsole.Id" class="cta-button">Xem chi tiết</a>
+                        }
+                        else
+                        {
+                            <a href="/Products?type=MayGame" class="cta-button">Xem chi tiết</a>
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -44,21 +76,18 @@
         <div class="slider-dots"></div>
     </section>
 
-    @* --- PHẦN DANH MỤC ĐÃ ĐƯỢC SỬA LẠI LINK --- *@
+    @* --- PHẦN DANH MỤC --- *@
     <section class="categories-section">
         <div class="container">
             <div class="category-grid">
-                @* SỬA LẠI LINK Ở ĐÂY *@
                 <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" class="category-item">
                     <img src="/image/Game.png" alt="Máy Game">
                     <span>Máy Game</span>
                 </a>
-                @* SỬA LẠI LINK Ở ĐÂY *@
                 <a asp-controller="Products" asp-action="Index" asp-route-type="PhuKien" class="category-item">
                     <img src="/image/console.png" alt="Phụ kiện">
                     <span>Phụ kiện</span>
                 </a>
-                @* SỬA LẠI LINK Ở ĐÂY *@
                 <a asp-controller="Products" asp-action="Index" asp-route-type="DiaGame" class="category-item">
                     <img src="/image/gamedics.png" alt="Đĩa Game">
                     <span>Đĩa/Băng Game</span>
@@ -68,7 +97,7 @@
     </section>
 
 
-    @* --- PHẦN SẢN PHẨM NỔI BẬT (GIỮ NGUYÊN) --- *@
+    @* --- PHẦN SẢN PHẨM NỔI BẬT --- *@
     <hr />
     <section class="section-content padding-y">
         <div class="container">
@@ -82,21 +111,23 @@
                         <button class="arrow prev-arrow" disabled>&#10094;</button>
                         <div class="product-slider-wrapper">
                             <div class="product-slider">
-                                @* Vòng lặp này sẽ duyệt qua danh sách FeaturedProducts từ ViewModel *@
                                 @foreach (var product in Model.FeaturedProducts)
                                 {
                                     <div class="product-card">
-                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="img-wrap">
-                                            <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/image/default-product-image.png" : product.ImageUrl)" alt="@product.Name">
+                                        @* SỬA LINK ẢNH *@
+                                        <a href="/san-pham/@SlugHelper.GenerateSlug(product.Name)-@product.Id" class="img-wrap">
+                                            <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/image/default-product-image.png" : product.ImageUrl)" alt="@product.Name" loading="lazy">
                                         </a>
                                         <div class="info-wrap">
-                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="title" title="@product.Name">@product.Name</a>
+                                            @* SỬA LINK TÊN *@
+                                            <a href="/san-pham/@SlugHelper.GenerateSlug(product.Name)-@product.Id" class="title" title="@product.Name">@product.Name</a>
                                             <div class="price-wrap mt-2">
                                                 <span class="price">@product.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</span>
                                             </div>
                                         </div>
                                         <div class="card-footer">
-                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="btn btn-sm btn-primary float-right">Xem</a>
+                                            @* SỬA LINK NÚT XEM *@
+                                            <a href="/san-pham/@SlugHelper.GenerateSlug(product.Name)-@product.Id" class="btn btn-sm btn-primary float-right">Xem</a>
                                         </div>
                                     </div>
                                 }

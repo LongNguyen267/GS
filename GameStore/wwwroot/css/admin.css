@@ -1,106 +1,360 @@
-﻿/* --- CSS CHUNG CHO CẢ LAYOUT ADMIN HEADER VÀ SIDEBAR --- */
+﻿/* --- GOOGLE FONTS --- */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+:root {
+    --primary-color: #4e73df; /* Xanh dương hiện đại */
+    --secondary-color: #858796;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-bg: #f8f9fc;
+    --dark-text: #5a5c69;
+    --sidebar-width: 250px;
+    --header-height: 70px;
+    --transition-speed: 0.3s;
+}
+
 body {
-    background-color: #f0f2f5;
-    color: #333;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--light-bg);
+    color: var(--dark-text);
     margin: 0;
+    overflow-x: hidden;
 }
 
-/* Header */
-.admin-header {
-    background-color: #2c3e50;
-    color: #fff;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 998;
-    padding-left: 80px; /* Tạo không gian cho nút toggle */
-}
-
-.admin-nav {
-    display: flex;
-    align-items: center;
-}
-
-    .admin-nav a {
-        color: #fff;
-        margin-left: 1.5rem;
-        text-decoration: none;
-        font-weight: bold;
-        transition: color 0.2s ease;
-    }
-
-        .admin-nav a:hover {
-            color: #007bff;
-        }
-
-/* Sidebar */
+/* --- SIDEBAR --- */
 .sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: linear-gradient(180deg, #4e73df 10%, #224abe 100%); /* Gradient xanh cực đẹp */
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
-    width: 250px;
-    background-color: #2c3e50;
-    color: white;
-    padding-top: 20px;
-    transition: left 0.3s ease;
-    z-index: 999;
+    transition: all var(--transition-speed);
+    z-index: 1000;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
 }
 
     .sidebar.hidden {
-        left: -250px;
+        margin-left: calc(var(--sidebar-width) * -1);
     }
 
-    .sidebar a {
+.sidebar-brand {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+    .sidebar-brand i {
+        font-size: 1.5rem;
+        margin-right: 10px;
+        transform: rotate(-15deg); /* Hiệu ứng logo nghiêng */
+    }
+
+.sidebar-menu {
+    padding: 20px 10px;
+}
+
+    .sidebar-menu a {
         display: flex;
         align-items: center;
         padding: 15px 20px;
-        color: white;
+        color: rgba(255,255,255,0.8);
         text-decoration: none;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        transition: all 0.2s;
+        font-weight: 600;
     }
 
-        .sidebar a:hover {
-            background-color: #34495e;
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(255,255,255,0.15); /* Hiệu ứng sáng lên */
+            color: white;
+            transform: translateX(5px); /* Nhích nhẹ sang phải */
         }
 
-        .sidebar a i {
-            margin-right: 10px;
+        .sidebar-menu a i {
+            width: 30px; /* Cố định chiều rộng icon để text thẳng hàng */
+            font-size: 1.1rem;
         }
 
-/* Nút toggle (☰) */
-.toggle-btn {
+/* --- HEADER --- */
+.admin-header {
+    height: var(--header-height);
+    background-color: white;
     position: fixed;
-    top: 20px;
-    left: 20px;
-    background-color: #2980b9;
-    color: white;
-    padding: 10px 15px;
-    font-size: 20px;
+    top: 0;
+    left: var(--sidebar-width); /* Mặc định chừa chỗ cho sidebar */
+    right: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15); /* Đổ bóng Header */
+    transition: left var(--transition-speed);
+}
+
+    .admin-header.full-width {
+        left: 0;
+    }
+
+.toggle-btn {
+    background: transparent;
     border: none;
+    color: #4e73df;
+    font-size: 1.5rem;
     cursor: pointer;
-    z-index: 1000;
-    border-radius: 4px;
+    padding: 5px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    transition: background 0.2s;
 }
 
     .toggle-btn:hover {
-        background-color: #1c638f;
+        background-color: #f1f3f9;
     }
 
-/* Nội dung chính */
-.content {
-    margin-left: 20px;
-    padding: 20px;
-    padding-top: 80px;
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.sidebar-shown .content {
-    margin-left: 270px;
-    transition: margin 0.3s;
+.user-name {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.btn-logout {
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+    .btn-logout:hover {
+        color: var(--danger-color);
+    }
+
+/* --- MAIN CONTENT --- */
+.main-wrapper {
+    margin-top: var(--header-height);
+    margin-left: var(--sidebar-width);
+    padding: 25px;
+    transition: margin-left var(--transition-speed);
+}
+
+    .main-wrapper.full-width {
+        margin-left: 0;
+    }
+
+/* --- DASHBOARD CARDS (Thêm vào để trang Index đẹp hơn) --- */
+.card-stat {
+    border: none;
+    border-radius: 0.35rem;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+    background: white;
+    transition: transform 0.2s;
+    height: 100%;
+}
+
+    .card-stat:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-stat .card-body {
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+.stat-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.stat-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #5a5c69;
+}
+
+.stat-icon {
+    font-size: 2rem;
+    opacity: 0.3;
+}
+
+/* Các màu viền trái cho card */
+.border-left-primary {
+    border-left: 0.25rem solid var(--primary-color) !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid var(--success-color) !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid var(--info-color) !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid var(--warning-color) !important;
+}
+
+/* Text colors */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-success {
+    color: var(--success-color) !important;
+}
+
+.text-info {
+    color: var(--info-color) !important;
+}
+
+.text-warning {
+    color: var(--warning-color) !important;
+}
+
+/* --- CHAT WIDGET: ADMIN (BLUE THEME) --- */
+.admin-chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #4e73df; /* Xanh Dương Admin */
+    color: white;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 15px rgba(78, 115, 223, 0.4);
+    cursor: pointer;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: transform 0.2s;
+}
+
+    .admin-chat-toggle:hover {
+        transform: scale(1.1);
+    }
+
+.admin-chat-box {
+    display: none;
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    height: 450px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    z-index: 1050;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #e3e6f0;
+}
+
+.ac-header {
+    background: #4e73df; /* Header Xanh Dương */
+    color: white;
+    padding: 15px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ac-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f8f9fc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ac-msg {
+    padding: 10px 14px;
+    border-radius: 15px;
+    font-size: 14px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.ac-msg-in {
+    background: #eaecf4;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+.ac-msg-out {
+    background: #4e73df;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.ac-sender-name {
+    font-size: 11px;
+    color: #858796;
+    margin-bottom: 2px;
+}
+
+.ac-footer {
+    padding: 10px;
+    border-top: 1px solid #e3e6f0;
+    display: flex;
+    gap: 5px;
+    background: white;
+}
+
+.ac-input {
+    flex: 1;
+    padding: 8px 15px;
+    border: 1px solid #d1d3e2;
+    border-radius: 20px;
+    outline: none;
+}
+
+.ac-btn-send {
+    background: #4e73df;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
 }

@@ -3,8 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GameStore</title>
-    <link rel="stylesheet" href="~/css/style.css" />
+
+    <title>@(ViewData["Title"] ?? "Trang chủ") - Chill Game Store</title>
+
+    <meta name="description" content="@(ViewData["MetaDescription"] ?? "Chill Game Store - Chuyên cung cấp máy game, đĩa game và phụ kiện chính hãng giá tốt nhất.")">
+    <meta name="keywords" content="@(ViewData["MetaKeywords"] ?? "game store, ps5, nintendo switch, đĩa game, tay cầm xbox")">
+
+    <meta property="og:title" content="@(ViewData["Title"] ?? "Chill Game Store")" />
+    <meta property="og:description" content="@(ViewData["MetaDescription"] ?? "Cửa hàng game uy tín số 1 Việt Nam")" />
+    <meta property="og:image" content="@(ViewData["OgImage"] ?? "https://yourdomain.com/image/NIIE.png")" />
+    <meta property="og:type" content="website" />
+
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/Cart.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/product-detail.css" asp-append-version="true" />
@@ -12,135 +22,13 @@
     <link rel="stylesheet" href="~/css/confirmation-page.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
-    <style>
-        .notification-wrapper {
-            position: relative;
-            margin-right: 15px;
-            cursor: pointer;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: #ff3b30;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 11px;
-            font-weight: bold;
-            display: none; /* Ẩn mặc định */
-        }
-
-        .notification-dropdown {
-            display: none; /* Ẩn mặc định */
-            position: absolute;
-            top: 35px;
-            right: -10px;
-            width: 320px; /* Tăng chiều rộng xíu cho đẹp */
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 9999;
-            overflow: hidden;
-            border: 1px solid #eee;
-        }
-
-        .notification-header {
-            padding: 10px 15px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #eee;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .notification-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .notification-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f1f1f1;
-            display: block;
-            text-decoration: none;
-            color: #333;
-            transition: 0.2s;
-            cursor: default; /* Mặc định con trỏ */
-            position: relative; /* [MỚI] Để căn chỉnh nút xóa */
-            padding-right: 30px; /* [MỚI] Tránh chữ đè lên nút xóa */
-        }
-
-            .notification-item:hover {
-                background-color: #f0f2f5;
-            }
-
-            .notification-item h6 {
-                margin: 0 0 5px 0;
-                font-size: 14px;
-                font-weight: 600;
-            }
-
-            .notification-item p {
-                margin: 0;
-                font-size: 13px;
-                color: #555;
-                line-height: 1.4;
-            }
-
-        .notification-empty {
-            padding: 20px;
-            text-align: center;
-            color: #999;
-            font-size: 13px;
-        }
-
-        /* CSS cho nút Copy */
-        .btn-copy-voucher {
-            transition: all 0.2s;
-        }
-
-            .btn-copy-voucher:hover {
-                background-color: #388e3c !important;
-            }
-
-            .btn-copy-voucher:active {
-                transform: scale(0.95);
-            }
-
-        /* [MỚI] CSS cho nút Xóa (Dấu X) */
-        .btn-delete-noti {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            color: #ccc;
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-            text-align: center;
-            line-height: 20px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            font-size: 12px;
-            z-index: 10;
-        }
-
-            .btn-delete-noti:hover {
-                background-color: #ff3b30;
-                color: white;
-            }
-    </style>
-
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header class="main-header">
         <div class="logo">
             <a asp-controller="Home" asp-action="Index">
-                <img src="~/image/NIIE.png" alt="KhoaLongTanPhu">
+                <img src="~/image/NIIE.png" alt="NIIE">
             </a>
         </div>
         <nav class="main-nav">
@@ -154,17 +42,6 @@
                 <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." class="search-input">
                 <button id="searchButton" class="search-btn"><i class="fas fa-search"></i></button>
                 <div id="searchResults" class="search-results-dropdown">
-                </div>
-            </div>
-
-            <div class="notification-wrapper" id="bellWrapper">
-                <i class="fas fa-bell fa-lg" style="color: #333;"></i>
-                <span class="notification-badge" id="notiCount">0</span>
-
-                <div class="notification-dropdown" id="notiDropdown">
-                    <div class="notification-header">Thông báo mới</div>
-                    <ul class="notification-list" id="notiList">
-                    </ul>
                 </div>
             </div>
             <a asp-controller="Cart" asp-action="Index">
@@ -204,7 +81,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // --- SCRIPT 1: TÌM KIẾM (GIỮ NGUYÊN) ---
             const searchInput = document.getElementById('searchInput');
             const searchResults = document.getElementById('searchResults');
             let timeout = null;
@@ -216,6 +92,7 @@
                     searchResults.style.display = 'none';
                     return;
                 }
+
                 timeout = setTimeout(() => {
                     fetch(`/Products/Search?query=${query}`)
                         .then(response => response.json())
@@ -238,157 +115,83 @@
                         });
                 }, 300);
             });
-
-            // --- SCRIPT 2: XỬ LÝ THÔNG BÁO & VOUCHER CODE & XÓA (FULL OPTION) ---
-
-            loadNotifications();
-
-            // Click vào chuông
-            $('#bellWrapper').click(function(e){
-                e.stopPropagation();
-                $('#notiDropdown').toggle();
-            });
-
-            // Click ra ngoài thì đóng
-            $(document).click(function(){
-                $('#notiDropdown').hide();
-            });
-
-            // Xử lý sự kiện click nút COPY
-            $('#notiList').on('click', '.btn-copy-voucher', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-
-                var code = $(this).data('code');
-                var $btn = $(this);
-
-                // Copy vào clipboard
-                navigator.clipboard.writeText(code).then(function() {
-                    var originalText = $btn.text();
-                    $btn.text('ĐÃ COPY').css({'background-color': '#333', 'color': '#fff'});
-                    toastr.success('Đã sao chép mã giảm giá: ' + code);
-
-                    setTimeout(function() {
-                        $btn.text(originalText).css({'background-color': '#4caf50', 'color': 'white'});
-                    }, 2000);
-                }, function(err) {
-                    toastr.error('Không thể copy, hãy thử copy thủ công');
-                });
-            });
-
-            // [MỚI] Xử lý nút XÓA THÔNG BÁO
-            $('#notiList').on('click', '.btn-delete-noti', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-
-                var id = $(this).data('id');
-                var $item = $(this).closest('li');
-
-                // Lưu ID vào LocalStorage (Danh sách đen)
-                var hiddenNotis = JSON.parse(localStorage.getItem('hidden_notis') || "[]");
-                if(!hiddenNotis.includes(id)) {
-                    hiddenNotis.push(id);
-                    localStorage.setItem('hidden_notis', JSON.stringify(hiddenNotis));
-                }
-
-                // Hiệu ứng xóa giao diện
-                $item.fadeOut(300, function() {
-                    $(this).remove();
-
-                    // Cập nhật lại số lượng badge
-                    var count = parseInt($('#notiCount').text()) - 1;
-                    if(count <= 0) {
-                        $('#notiCount').hide();
-                        $('#notiList').html('<div class="notification-empty">Không có thông báo mới</div>');
-                    } else {
-                        $('#notiCount').text(count);
-                    }
-                });
-            });
-
-            function loadNotifications() {
-                $.ajax({
-                    url: '/Home/GetThongBao',
-                    type: 'GET',
-                    success: function (res) {
-                        var list = res.data;
-                        var $badge = $('#notiCount');
-                        var $list = $('#notiList');
-
-                        $list.empty();
-
-                        // [MỚI] Lấy danh sách ID đã bị xóa từ LocalStorage
-                        var hiddenNotis = JSON.parse(localStorage.getItem('hidden_notis') || "[]");
-
-                        // [MỚI] Lọc bỏ những thông báo đã bị xóa
-                        var visibleList = list.filter(function(item) {
-                            return !hiddenNotis.includes(item.id);
-                        });
-
-                        if (visibleList.length > 0) {
-                            $badge.text(visibleList.length).show();
-
-                            $.each(visibleList, function (key, item) {
-                                var dateStr = new Date(item.createdDate).toLocaleDateString('vi-VN');
-
-                                // --- LOGIC HIỂN THỊ VOUCHER ---
-                                var voucherHtml = '';
-                                if (item.voucherCode && item.voucherCode.trim() !== "") {
-                                    voucherHtml = `
-                                        <div style="background: #e8f5e9; padding: 6px 10px; border-radius: 4px; margin-top: 8px; border: 1px dashed #4caf50; display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <small style="color: #666;">Mã ưu đãi:</small><br>
-                                                <strong style="color: #2e7d32; font-size: 14px;">${item.voucherCode}</strong>
-                                            </div>
-                                            <button class="btn-copy-voucher" data-code="${item.voucherCode}"
-                                                style="border: none; background: #4caf50; color: white; font-size: 11px; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-weight: bold;">
-                                                COPY
-                                            </button>
-                                        </div>
-                                    `;
-                                }
-
-                                // --- [MỚI] LOGIC HIỂN THỊ HÌNH ẢNH ---
-                                var imageHtml = '';
-                                if (item.imageUrl && item.imageUrl.trim() !== "") {
-                                    imageHtml = `
-                                        <div style="margin-top: 5px; margin-bottom: 8px;">
-                                            <img src="${item.imageUrl}" alt="Banner" style="width: 100%; height: auto; border-radius: 6px; object-fit: cover; border: 1px solid #eee;" />
-                                        </div>
-                                    `;
-                                }
-
-                                // [MỚI] Thêm nút xóa vào HTML
-                                var html = `
-                                    <li>
-                                        <div class="notification-item">
-                                            <span class="btn-delete-noti" data-id="${item.id}" title="Xóa thông báo này">
-                                                <i class="fas fa-times"></i>
-                                            </span>
-
-                                            <h6 style="padding-right: 15px; margin-bottom: 5px;">${item.title}</h6>
-
-                                            ${imageHtml}
-
-                                            <p>${item.message}</p>
-                                            ${voucherHtml}
-                                            <p style="font-size:11px; color:#999; margin-top:6px; text-align: right;">${dateStr}</p>
-                                        </div>
-                                    </li>
-                                `;
-                                $list.append(html);
-                            });
-                        } else {
-                            $badge.hide();
-                            $list.html('<div class="notification-empty">Không có thông báo mới</div>');
-                        }
-                    },
-                    error: function (err) {
-                        console.log("Lỗi tải thông báo");
-                    }
-                });
-            }
         });
+    </script>
+
+    <button class="lc-toggle-btn" onclick="toggleChat()">
+        <i class="fas fa-comment-dots"></i>
+    </button>
+
+    <div class="lc-chat-box" id="liveChatBox">
+        <div class="lc-header">
+            <span><i class="fas fa-headset"></i> Hỗ trợ trực tuyến</span>
+            <span class="lc-close-btn" onclick="toggleChat()"><i class="fas fa-times"></i></span>
+        </div>
+
+        <div class="lc-body" id="chatList">
+            <div class="lc-msg lc-msg-in">
+                Xin chào! @(User.Identity != null && User.Identity.IsAuthenticated ? User.Identity.Name : "Bạn") cần hỗ trợ gì không?
+            </div>
+        </div>
+
+        <div class="lc-footer">
+            <input type="hidden" id="chatUser" value="@(User.Identity != null && User.Identity.IsAuthenticated ? User.Identity.Name : "Khách")" />
+            <input type="text" class="lc-input" id="chatMessage" placeholder="Nhập tin nhắn..." onkeypress="handleChatEnter(event)">
+            <button class="lc-send-btn" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+
+    <script>
+        // 1. Kết nối
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+        // 2. Nhận tin nhắn
+        connection.on("ReceiveMessage", function (user, message) {
+            var chatList = document.getElementById("chatList");
+            var currentUser = document.getElementById("chatUser").value;
+
+            var msgDiv = document.createElement("div");
+            msgDiv.classList.add("lc-msg"); // Class chung
+
+            if (user === currentUser) {
+                msgDiv.classList.add("lc-msg-out"); // Tin của mình
+                msgDiv.textContent = message;
+            } else {
+                msgDiv.classList.add("lc-msg-in"); // Tin người khác
+                msgDiv.innerHTML = `<span class="lc-sender-name">${user}</span>${message}`;
+            }
+
+            chatList.appendChild(msgDiv);
+            chatList.scrollTop = chatList.scrollHeight;
+        });
+
+        // 3. Bắt đầu kết nối
+        connection.start().catch(err => console.error(err.toString()));
+
+        // 4. Gửi tin nhắn
+        function sendChatMessage() {
+            var user = document.getElementById("chatUser").value;
+            var messageInput = document.getElementById("chatMessage");
+            var msg = messageInput.value;
+
+            if (msg.trim() === "") return;
+
+            connection.invoke("SendMessage", user, msg).catch(err => console.error(err.toString()));
+            messageInput.value = "";
+        }
+
+        // 5. Các hàm hỗ trợ
+        function toggleChat() {
+            var box = document.getElementById("liveChatBox");
+            if (box.style.display === "flex") box.style.display = "none";
+            else box.style.display = "flex";
+        }
+
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

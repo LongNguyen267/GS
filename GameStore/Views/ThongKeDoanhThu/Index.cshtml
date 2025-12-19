@@ -5,52 +5,93 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container py-5">
-    <h1>Thống kê doanh thu</h1>
-    <hr />
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Báo Cáo Doanh Thu</h1>
+</div>
 
-    <form asp-action="Index" method="get" class="mb-4">
-        <div class="row g-3 align-items-end">
-            <div class="col-md-3">
-                <label for="startDate" class="form-label">Ngày bắt đầu</label>
-                <input type="date" class="form-control" name="startDate" id="startDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Bộ lọc thời gian</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="Index" method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="startDate" class="form-label font-weight-bold">Từ ngày</label>
+                    <input type="date" class="form-control" name="startDate" id="startDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-md-4">
+                    <label for="endDate" class="form-label font-weight-bold">Đến ngày</label>
+                    <input type="date" class="form-control" name="endDate" id="endDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter"></i> Xem báo cáo
+                    </button>
+                </div>
             </div>
-            <div class="col-md-3">
-                <label for="endDate" class="form-label">Ngày kết thúc</label>
-                <input type="date" class="form-control" name="endDate" id="endDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
-            </div>
-            <div class="col-md-auto">
-                <button type="submit" class="btn btn-primary">Xem doanh thu</button>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
+</div>
 
-    <div class="card text-white bg-success mb-3">
-        <div class="card-header">Tổng doanh thu</div>
-        <div class="card-body">
-            <h4 class="card-title">@Model.TotalRevenue.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</h4>
+<div class="row">
+    <div class="col-xl-6 col-md-6 mb-4">
+        <div class="card-stat border-left-success h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Tổng Doanh Thu (Toàn bộ)
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.TotalRevenue.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="card text-white bg-info mb-3">
-        <div class="card-header">Doanh thu từ @Model.StartDate.ToString("dd/MM/yyyy") đến @Model.EndDate.ToString("dd/MM/yyyy")</div>
-        <div class="card-body">
-            <h4 class="card-title">@Model.RevenueByDate.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</h4>
+    <div class="col-xl-6 col-md-6 mb-4">
+        <div class="card-stat border-left-info h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Doanh thu (Giai đoạn chọn)
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.RevenueByDate.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                        </div>
+                        <small class="text-muted">(@Model.StartDate.ToString("dd/MM") - @Model.EndDate.ToString("dd/MM/yyyy"))</small>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="card mt-4 p-3">
-        <h4>Biểu đồ doanh thu 30 ngày gần nhất</h4>
-        <canvas id="dailyRevenueChart" style="max-height: 400px;"></canvas>
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Biểu đồ tăng trưởng (30 ngày gần nhất)</h6>
+    </div>
+    <div class="card-body">
+        <div class="chart-area" style="position: relative; height: 400px; width: 100%;">
+            <canvas id="dailyRevenueChart"></canvas>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Lấy dữ liệu từ ViewModel và chuyển đổi sang JavaScript
             const dailyRevenueData = @Html.Raw(Json.Serialize(Model.DailyRevenueData));
             const labels = Object.keys(dailyRevenueData);
             const data = Object.values(dailyRevenueData);
@@ -61,21 +102,30 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Doanh thu',
+                        label: 'Doanh thu (VNĐ)',
                         data: data,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
+                        backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        pointRadius: 3,
+                        pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                        pointBorderColor: 'rgba(78, 115, 223, 1)',
+                        pointHoverRadius: 3,
+                        pointHoverBackgroundColor: 'rgba(78, 115, 223, 1)',
+                        pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                        pointHitRadius: 10,
+                        pointBorderWidth: 2,
+                        tension: 0.3, // Đường cong mềm mại
                         fill: true
                     }]
                 },
                 options: {
-                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { left: 10, right: 25, top: 25, bottom: 0 } },
                     scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+                        x: { grid: { display: false, drawBorder: false }, ticks: { maxTicksLimit: 7 } },
+                        y: { ticks: { maxTicksLimit: 5, padding: 10, callback: function(value) { return value.toLocaleString('vi-VN') + 'đ'; } }, grid: { color: "rgb(234, 236, 244)", zeroLineColor: "rgb(234, 236, 244)", drawBorder: false, borderDash: [2], zeroLineBorderDash: [2] } }
+                    },
+                    plugins: { legend: { display: false } }
                 }
             });
         });

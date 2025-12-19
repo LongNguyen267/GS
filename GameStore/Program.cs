@@ -1,63 +1,80 @@
 ﻿using GameStore.Models;
 using GameStore.Services;
-using Microsoft.AspNetCore.Authentication.Cookies; // Thêm namespace này cho Authentication
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-
+using GameStore.Chat;
+using GameStore.Models.Services;
 var builder = WebApplication.CreateBuilder(args);
 
-// Thêm dịch vụ Session vào ứng dụng
+// --- 1. ĐĂNG KÝ DỊCH VỤ (SERVICES) ---
+
+// Session
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian sống của session là 30 phút
-    options.Cookie.HttpOnly = true; // Cookie chỉ có thể truy cập bằng HTTP, không phải JavaScript
-    options.Cookie.IsEssential = true; // Đánh dấu cookie là thiết yếu để session hoạt động
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
-// Thêm dịch vụ DbContext vào Dependency Injection
-// Cấu hình để sử dụng SQL Server với chuỗi kết nối từ appsettings.json
+// Database
 builder.Services.AddDbContext<GameStoreDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GameStoreDBConnection")));
 
-// Thêm Authentication & Authorization
+// Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login"; // Đường dẫn đến trang đăng nhập
-        options.LogoutPath = "/Account/Logout"; // Đường dẫn đến trang đăng xuất
-        options.AccessDeniedPath = "/Account/AccessDenied"; // Trang khi truy cập bị từ chối
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied";
     });
 
-builder.Services.AddAuthorization(); // Thêm dịch vụ Authorization
+builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IVnPayService, VnPayService>();
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+// SignalR (Chat)
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- 2. CẤU HÌNH PIPELINE (MIDDLEWARE) ---
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+// [QUAN TRỌNG] Dòng này giúp web load được CSS, JS, Ảnh trong thư mục wwwroot
+// Nếu thiếu dòng này, web sẽ trắng trơn và vỡ giao diện
 app.UseStaticFiles();
 
-// Thêm middleware Session vào HTTP request pipeline
-app.UseSession();
+app.UseSession(); // Kích hoạt Session
 
-app.UseRouting();
+app.UseRouting(); // Kích hoạt định tuyến
 
-// Thêm middleware authentication và authorization
-// Quan trọng: Phải đặt sau UseRouting() và trước MapControllerRoute()
+// Authentication & Authorization phải nằm SAU UseRouting và TRƯỚC MapControllerRoute
 app.UseAuthentication();
 app.UseAuthorization();
 
+// --- 3. ĐỊNH TUYẾN (ROUTES) ---
+
+// Route SEO cho sản phẩm (Slug)
+app.MapControllerRoute(
+    name: "product-details",
+    pattern: "san-pham/{slug}-{id}",
+    defaults: new { controller = "Products", action = "Details" });
+
+// Route mặc định
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Route cho Chat SignalR
+app.MapHub<GameStore.Chat.ChatHub>("/chatHub");
 
 app.Run();

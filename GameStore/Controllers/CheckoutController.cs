@@ -35,71 +35,19 @@ namespace GameStore.Controllers
             return string.IsNullOrEmpty(cartString) ? new List<CartItem>() : JsonSerializer.Deserialize<List<CartItem>>(cartString) ?? new List<CartItem>();
         }
 
-        // [LOGIC CHECK VOUCHER]
-        [HttpPost]
-        public async Task<IActionResult> ApplyVoucher(string code, decimal currentTotal)
-        {
-            // 1. Tìm voucher
-            var voucher = await _context.Notifications
-                .FirstOrDefaultAsync(n => n.VoucherCode == code && n.IsActive == true);
-
-            if (voucher == null) return Json(new { success = false, message = "Mã không hợp lệ!" });
-
-            // [MỚI] Kiểm tra số lượng
-            if (voucher.VoucherQuantity <= 0)
-            {
-                return Json(new { success = false, message = "Mã giảm giá này đã hết lượt sử dụng!" });
-            }
-
-            if (voucher.DiscountPercent <= 0) return Json(new { success = false, message = "Mã này không có giá trị giảm!" });
-
-            // 2. Kiểm tra điều kiện Hãng/Loại
-            var cartItems = GetCart();
-            if (cartItems == null || !cartItems.Any()) return Json(new { success = false, message = "Giỏ hàng trống!" });
-
-            var productIds = cartItems.Select(item => item.ProductId).ToList();
-            var productsInDb = await _context.Products
-                                             .Include(p => p.Brand).Include(p => p.Category)
-                                             .Where(p => productIds.Contains(p.Id)).ToListAsync();
-
-            decimal eligibleAmount = 0;
-
-            foreach (var item in cartItems)
-            {
-                var product = productsInDb.FirstOrDefault(p => p.Id == item.ProductId);
-                if (product != null)
-                {
-                    bool isEligible = true;
-                    if (voucher.ApplyToBrandId.HasValue && voucher.ApplyToBrandId != product.BrandId) isEligible = false;
-                    if (voucher.ApplyToCategoryId.HasValue && voucher.ApplyToCategoryId != product.CategoryId) isEligible = false;
-
-                    if (isEligible) eligibleAmount += (product.Price * item.Quantity);
-                }
-            }
-
-            if (eligibleAmount == 0) return Json(new { success = false, message = "Mã không áp dụng cho sản phẩm trong giỏ!" });
-
-            decimal discountAmount = eligibleAmount * voucher.DiscountPercent / 100;
-            decimal realTotalCart = productsInDb.Sum(p => p.Price * cartItems.First(c => c.ProductId == p.Id).Quantity);
-            decimal newTotal = realTotalCart - discountAmount;
-
-            return Json(new
-            {
-                success = true,
-                discountPercent = voucher.DiscountPercent,
-                discountAmount = discountAmount,
-                newTotal = newTotal,
-                message = $"Áp dụng thành công! Giảm {voucher.DiscountPercent}%."
-            });
-        }
-
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (!User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             var cart = GetCart();
-            foreach (var item in cart) item.Product = await _context.Products.FindAsync(item.ProductId);
+            foreach (var item in cart)
+            {
+                item.Product = await _context.Products.FindAsync(item.ProductId);
+            }
 
             var viewModel = new CheckoutViewModel
             {
@@ -114,24 +62,37 @@ namespace GameStore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PlaceOrder(CheckoutViewModel model)
         {
+            // --- VALIDATION ---
             if (!ModelState.IsValid)
             {
                 model.CartItems = GetCart();
-                foreach (var item in model.CartItems) item.Product = await _context.Products.FindAsync(item.ProductId);
+                foreach (var item in model.CartItems)
+                {
+                    item.Product = await _context.Products.FindAsync(item.ProductId);
+                }
                 return View("Index", model);
             }
 
-            if (!User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             var cartItemsList = GetCart();
-            if (cartItemsList == null || !cartItemsList.Any()) return RedirectToAction("Index", "Cart");
+            if (cartItemsList == null || !cartItemsList.Any())
+            {
+                return RedirectToAction("Index", "Cart");
+            }
 
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString)) return RedirectToAction("Login", "Account");
+            var userId = int.Parse(userIdString);
+
+            // --- LƯU ĐƠN HÀNG VÀO DATABASE ---
             var productIds = cartItemsList.Select(item => item.ProductId).ToList();
-
             var productsInCart = await _context.Products
-                                                .Include(p => p.Brand).Include(p => p.Category)
-                                                .Where(p => productIds.Contains(p.Id)).ToListAsync();
+                                            .Where(p => productIds.Contains(p.Id))
+                                            .ToListAsync();
 
             decimal totalAmount = 0;
 
@@ -166,49 +127,14 @@ namespace GameStore.Controllers
                 }
             }
 
-            // [XỬ LÝ TRỪ SỐ LƯỢNG VOUCHER]
-            if (!string.IsNullOrEmpty(model.VoucherCode))
-            {
-                var voucher = await _context.Notifications
-                    .FirstOrDefaultAsync(n => n.VoucherCode == model.VoucherCode && n.IsActive == true);
-
-                // Kiểm tra lại lần cuối xem còn lượt không (tránh trường hợp nhiều người mua cùng lúc)
-                if (voucher != null && voucher.DiscountPercent > 0 && voucher.VoucherQuantity > 0)
-                {
-                    decimal eligibleAmount = 0;
-                    foreach (var item in cartItemsList)
-                    {
-                        var product = productsInCart.FirstOrDefault(p => p.Id == item.ProductId);
-                        if (product != null)
-                        {
-                            bool isEligible = true;
-                            if (voucher.ApplyToBrandId.HasValue && voucher.ApplyToBrandId != product.BrandId) isEligible = false;
-                            if (voucher.ApplyToCategoryId.HasValue && voucher.ApplyToCategoryId != product.CategoryId) isEligible = false;
-
-                            if (isEligible) eligibleAmount += (product.Price * item.Quantity);
-                        }
-                    }
-
-                    if (eligibleAmount > 0)
-                    {
-                        decimal discountAmount = eligibleAmount * voucher.DiscountPercent / 100;
-                        totalAmount -= discountAmount;
-
-                        // [MỚI] TRỪ SỐ LƯỢNG ĐI 1
-                        voucher.VoucherQuantity = voucher.VoucherQuantity - 1;
-                        _context.Notifications.Update(voucher); // Cập nhật lại voucher
-                    }
-                }
-            }
-
             order.TotalAmount = totalAmount;
             _context.Update(order);
-
-            // Lưu tất cả thay đổi (bao gồm cả Order và VoucherQuantity)
             await _context.SaveChangesAsync();
 
+            // Xóa giỏ hàng
             HttpContext.Session.Remove(CartSessionKey);
 
+            // --- XỬ LÝ VNPAY ---
             if (model.PaymentMethod == "VnPay")
             {
                 var vnPayModel = new VnPayRequestModel
@@ -222,30 +148,37 @@ namespace GameStore.Controllers
                 return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, vnPayModel));
             }
 
+            // --- XỬ LÝ COD ---
             return RedirectToAction(nameof(OrderConfirmation), new { orderId = order.Id });
         }
 
-        // --- CÁC HÀM KHÁC GIỮ NGUYÊN ---
         [HttpGet]
         public IActionResult PaymentCallBack()
         {
             var response = _vnPayService.PaymentExecute(Request.Query);
+
             if (response == null || response.VnPayResponseCode != "00")
             {
                 TempData["Message"] = $"Lỗi thanh toán VNPay: {response?.VnPayResponseCode}";
                 return RedirectToAction("PaymentFail");
             }
+
             try
             {
+                // Tìm đơn hàng và cập nhật trạng thái
                 var orderId = int.Parse(response.OrderId);
                 var order = _context.Orders.FirstOrDefault(x => x.Id == orderId);
+
                 if (order != null)
                 {
                     order.PaymentStatus = "Paid";
                     order.PaymentTransactionId = response.TransactionId;
                     _context.SaveChanges();
                 }
+
                 TempData["Message"] = "Thanh toán thành công";
+
+                // [ĐÃ SỬA] Chuyển hướng kèm theo orderId để trang Success có dữ liệu hiển thị
                 return RedirectToAction("PaymentSuccess", new { orderId = orderId });
             }
             catch (Exception ex)
@@ -255,9 +188,13 @@ namespace GameStore.Controllers
             }
         }
 
+        // [ĐÃ SỬA] Thêm tham số orderId và lấy dữ liệu từ DB
         public async Task<IActionResult> PaymentSuccess(int orderId)
         {
+            // Lấy thông tin đơn hàng từ DB
             var order = await _context.Orders.FindAsync(orderId);
+
+            // Trả về View kèm theo Model là Order
             return View(order);
         }
 
@@ -270,7 +207,10 @@ namespace GameStore.Controllers
         public async Task<IActionResult> OrderConfirmation(int orderId)
         {
             var order = await _context.Orders.FindAsync(orderId);
-            if (order == null) return NotFound();
+            if (order == null)
+            {
+                return NotFound();
+            }
             return View(order);
         }
     }

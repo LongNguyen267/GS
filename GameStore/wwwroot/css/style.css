@@ -587,3 +587,438 @@ h1, h2, h3 {
     text-align: center;
     color: #999;
 }
+
+/* =========================================
+   MODULE LIVE CHAT (SIGNALR) - ACCENT UPDATES
+   ========================================= */
+
+/* Container tổng thể để cô lập CSS */
+#live-chat-module {
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+/* Nút mở chat: Màu đồng bộ với CTA (cta-button) - Trắng-đen */
+.lc-toggle-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    /* --- CẬP NHẬT: Màu đồng bộ với cta-button --- */
+    background-color: #ffffff; /* Nền trắng */
+    color: #111111; /* Icon đen */
+    /* ------------------------------------------- */
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 9999;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background-color 0.2s;
+    outline: none;
+}
+
+    .lc-toggle-btn:hover {
+        transform: scale(1.1);
+        /* --- CẬP NHẬT: Hiệu ứng hover --- */
+        background-color: #f1f3f4; /* Màu xám nhạt */
+        /* ------------------------------- */
+    }
+
+/* Khung chat chính: Màu đồng bộ với header (.main-header) - Đen đậm */
+.lc-chat-box {
+    display: none;
+    position: fixed;
+    bottom: 95px;
+    right: 25px;
+    width: 320px;
+    height: 450px;
+    /* --- CẬP NHẬT: Màu đồng bộ với main-header --- */
+    background-color: #212529; /* Nền đen đậm */
+    /* --------------------------------------------- */
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.4); /* Bóng đậm hơn */
+    z-index: 9999;
+    flex-direction: column;
+    overflow: hidden;
+    /* --- CẬP NHẬT: Viền mờ hơn --- */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* ---------------------------- */
+}
+
+/* Header của khung chat: Giữ nền đen và text trắng */
+.lc-header {
+    background-color: #212529;
+    color: #ffffff; /* Text trắng */
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lc-close-btn {
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    font-size: 18px;
+}
+
+    .lc-close-btn:hover {
+        opacity: 1;
+    }
+
+/* Phần nội dung tin nhắn: Màu nền tối hơn (body của web) */
+.lc-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    /* --- CẬP NHẬT: Màu đồng bộ với body --- */
+    background-color: #1a1a1a;
+    /* ------------------------------------- */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Bong bóng tin nhắn chung */
+.lc-msg {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    position: relative;
+}
+
+/* Tin nhắn đến (của người khác): Xám nhạt */
+.lc-msg-in {
+    background-color: #e4e6eb;
+    color: #111111;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+/* Tin nhắn đi (của mình): Màu đồng bộ với CTA - Trắng-đen */
+.lc-msg-out {
+    /* --- CẬP NHẬT: Màu đồng bộ với CTA --- */
+    background-color: #ffffff;
+    color: #111111;
+    /* ------------------------------------ */
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+/* Tên người gửi */
+.lc-sender-name {
+    font-size: 11px;
+    /* --- CẬP NHẬT: Màu text mờ cho tên --- */
+    color: rgba(255, 255, 255, 0.7);
+    /* ----------------------------------- */
+    margin-bottom: 4px;
+    display: block;
+    font-weight: 600;
+}
+
+/* Footer (Ô nhập liệu): Màu đen như header */
+.lc-footer {
+    padding: 12px;
+    /* --- CẬP NHẬT: Màu đen --- */
+    background-color: #212529;
+    /* -------------------------- */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Reset input: Màu nền tối, text trắng */
+.lc-input {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 25px;
+    outline: none;
+    font-size: 14px;
+    /* --- CẬP NHẬT: Màu input --- */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #1a1a1a;
+    color: #ffffff;
+    /* ------------------------- */
+    transition: border-color 0.2s;
+}
+
+    .lc-input:focus {
+        /* --- CẬP NHẬT: Viền khi focus --- */
+        border-color: #ffffff;
+        /* ------------------------------- */
+    }
+
+/* Nút gửi tin nhắn: Màu trắng */
+.lc-send-btn {
+    background: none;
+    border: none;
+    /* --- CẬP NHẬT: Màu trắng --- */
+    color: #ffffff;
+    /* -------------------------- */
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+    .lc-send-btn:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+/* Tùy chỉnh thanh cuộn cho khung chat */
+.lc-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lc-body::-webkit-scrollbar-track {
+    /* --- CẬP NHẬT: Nền thanh cuộn --- */
+    background: #1a1a1a;
+    /* -------------------------------- */
+}
+
+.lc-body::-webkit-scrollbar-thumb {
+    /* --- CẬP NHẬT: Thân thanh cuộn --- */
+    background: rgba(255, 255, 255, 0.2);
+    /* --------------------------------- */
+    border-radius: 3px;
+}
+
+    .lc-body::-webkit-scrollbar-thumb:hover {
+        /* --- CẬP NHẬT: Hover thanh cuộn --- */
+        background: rgba(255, 255, 255, 0.3);
+        /* ---------------------------------- */
+    }
+
+
+/* =========================================
+   MODULE LIVE CHAT (SIGNALR) - ACCENT UPDATES
+   ========================================= */
+/* Container tổng thể để cô lập CSS */
+#live-chat-module {
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+/* Nút mở chat: Màu đồng bộ với CTA (cta-button) - Trắng-đen */
+.lc-toggle-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    /* --- CẬP NHẬT: Màu đồng bộ với cta-button --- */
+    background-color: #ffffff; /* Nền trắng */
+    color: #111111; /* Icon đen */
+    /* ------------------------------------------- */
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 9999;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background-color 0.2s;
+    outline: none;
+}
+
+    .lc-toggle-btn:hover {
+        transform: scale(1.1);
+        /* --- CẬP NHẬT: Hiệu ứng hover --- */
+        background-color: #f1f3f4; /* Màu xám nhạt */
+        /* ------------------------------- */
+    }
+
+/* Khung chat chính: Màu đồng bộ với header (.main-header) - Đen đậm */
+.lc-chat-box {
+    display: none;
+    position: fixed;
+    bottom: 95px;
+    right: 25px;
+    width: 320px;
+    height: 450px;
+    /* --- CẬP NHẬT: Màu đồng bộ với main-header --- */
+    background-color: #212529; /* Nền đen đậm */
+    /* --------------------------------------------- */
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.4); /* Bóng đậm hơn */
+    z-index: 9999;
+    flex-direction: column;
+    overflow: hidden;
+    /* --- CẬP NHẬT: Viền mờ hơn --- */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* ---------------------------- */
+}
+
+/* Header của khung chat: Giữ nền đen và text trắng */
+.lc-header {
+    background-color: #212529;
+    color: #ffffff; /* Text trắng */
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lc-close-btn {
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    font-size: 18px;
+}
+
+    .lc-close-btn:hover {
+        opacity: 1;
+    }
+
+/* Phần nội dung tin nhắn: Màu nền tối hơn (body của web) */
+.lc-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    /* --- CẬP NHẬT: Màu đồng bộ với body --- */
+    background-color: #1a1a1a;
+    /* ------------------------------------- */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Bong bóng tin nhắn chung */
+.lc-msg {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    position: relative;
+}
+
+/* Tin nhắn đến (của người khác): Xám nhạt */
+.lc-msg-in {
+    background-color: #e4e6eb;
+    color: #111111;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+/* Tin nhắn đi (của mình): Màu đồng bộ với CTA - Trắng-đen */
+.lc-msg-out {
+    /* --- CẬP NHẬT: Màu đồng bộ với CTA --- */
+    background-color: #ffffff;
+    color: #111111;
+    /* ------------------------------------ */
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+/* Tên người gửi */
+.lc-sender-name {
+    font-size: 11px;
+    /* --- CẬP NHẬT: Màu text mờ cho tên --- */
+    color: rgba(255, 255, 255, 0.7);
+    /* ----------------------------------- */
+    margin-bottom: 4px;
+    display: block;
+    font-weight: 600;
+}
+
+/* Footer (Ô nhập liệu): Màu đen như header */
+.lc-footer {
+    padding: 12px;
+    /* --- CẬP NHẬT: Màu đen --- */
+    background-color: #212529;
+    /* -------------------------- */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Reset input: Màu nền tối, text trắng */
+.lc-input {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 25px;
+    outline: none;
+    font-size: 14px;
+    /* --- CẬP NHẬT: Màu input --- */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #1a1a1a;
+    color: #ffffff;
+    /* ------------------------- */
+    transition: border-color 0.2s;
+}
+
+    .lc-input:focus {
+        /* --- CẬP NHẬT: Viền khi focus --- */
+        border-color: #ffffff;
+        /* ------------------------------- */
+    }
+
+/* Nút gửi tin nhắn: Màu trắng */
+.lc-send-btn {
+    background: none;
+    border: none;
+    /* --- CẬP NHẬT: Màu trắng --- */
+    color: #ffffff;
+    /* -------------------------- */
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+    .lc-send-btn:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+/* Tùy chỉnh thanh cuộn cho khung chat */
+.lc-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lc-body::-webkit-scrollbar-track {
+    /* --- CẬP NHẬT: Nền thanh cuộn --- */
+    background: #1a1a1a;
+    /* -------------------------------- */
+}
+
+.lc-body::-webkit-scrollbar-thumb {
+    /* --- CẬP NHẬT: Thân thanh cuộn --- */
+    background: rgba(255, 255, 255, 0.2);
+    /* --------------------------------- */
+    border-radius: 3px;
+}
+
+    .lc-body::-webkit-scrollbar-thumb:hover {
+        /* --- CẬP NHẬT: Hover thanh cuộn --- */
+        background: rgba(255, 255, 255, 0.3);
+        /* ---------------------------------- */
+    }
+

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 
 namespace GameStore.Controllers
 {
@@ -83,30 +82,5 @@ namespace GameStore.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        // --- [ĐÃ SỬA] HÀM LẤY THÔNG BÁO + HÌNH ẢNH ---
-        [HttpGet]
-        public IActionResult GetThongBao()
-        {
-            var list = _context.Notifications
-                .Where(x => x.IsActive)
-                .OrderByDescending(x => x.CreatedDate)
-                .Take(10) // Lấy 10 tin mới nhất
-                .Select(x => new
-                {
-                    x.Id,
-                    x.Title,
-                    x.Message,
-                    x.CreatedDate,
-                    x.VoucherCode,
-
-                    // [QUAN TRỌNG] Thêm dòng này để lấy ảnh gửi xuống Layout
-                    imageUrl = x.ImageUrl
-                })
-                .ToList();
-
-            return Json(new { data = list });
-        }
-        // ------------------------------------------------
     }
 }

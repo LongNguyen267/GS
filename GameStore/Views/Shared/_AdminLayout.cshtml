@@ -3,59 +3,133 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Dashboard Admin</title>
+    <title>@ViewData["Title"] - Admin Portal</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
-<body class="sidebar-shown">
-    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-
+<body>
     <div class="sidebar" id="sidebar">
-        <div style="margin-top: 60px">
-            <a asp-action="Index" asp-controller="Admin"><i class="fas fa-home"></i> Home</a>
-
-            <a asp-controller="Admin" asp-action="CreateNotification">
-                <i class="fas fa-fw fa-bell"></i> Đăng thông báo
+        <div class="sidebar-brand">
+            <i class="fas fa-gamepad me-2"></i> GameStore
+        </div>
+        <div class="sidebar-menu">
+            <a asp-action="Index" asp-controller="Admin" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" ? "active" : "")">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
 
-            <a asp-controller="Admin" asp-action="ManageVoucher">
-                <i class="fas fa-fw fa-ticket"></i> Quản lý mã giảm giá
+            <hr style="border-color:rgba(255,255,255,0.2); margin: 10px 0;">
+
+            <div style="color:rgba(255,255,255,0.4); font-size: 0.75rem; font-weight:bold; margin: 10px 20px; text-transform:uppercase;">Quản lý</div>
+
+            <a asp-action="Index" asp-controller="QuanLySanPham" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "QuanLySanPham" ? "active" : "")">
+                <i class="fas fa-box-open"></i> Sản phẩm
             </a>
-            <a asp-action="Index" asp-controller="QuanLySanPham"><i class="fas fa-truck-loading"></i>Quản lý sản phẩm</a>
-            <a asp-action="Index" asp-controller="ThongKeDoanhThu"><i class="fas fa-chart-bar"></i>Thống kê doanh thu</a>
-            <a asp-action="Index" asp-controller="KhachHang"><i class="fas fa-user-friends"></i>Khách hàng</a>
+            <a asp-action="Index" asp-controller="AdminDonHang" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "AdminDonHang" ? "active" : "")">
+                <i class="fas fa-clipboard-list"></i> Đơn hàng
+            </a>
+            <a asp-action="Index" asp-controller="KhachHang" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "KhachHang" ? "active" : "")">
+                <i class="fas fa-users"></i> Khách hàng
+            </a>
+
+            <a asp-action="Index" asp-controller="AdminMarketing" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "AdminMarketing" ? "active" : "")">
+                <i class="fas fa-mail-bulk"></i> Email Marketing
+            </a>
+
+            <a asp-action="Index" asp-controller="ThongKeDoanhThu" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "ThongKeDoanhThu" ? "active" : "")">
+                <i class="fas fa-chart-line"></i> Doanh thu
+            </a>
         </div>
     </div>
 
-    <header class="admin-header">
-        <div>
-            <h4 class="header-title">Dashboard Admin</h4>
+    <header class="admin-header" id="header">
+        <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <div class="user-info">
+            <span class="user-name">@(User.Identity?.Name ?? "Admin")</span>
+            <div class="user-avatar">@((User.Identity?.Name?.Substring(0, 1) ?? "A").ToUpper())</div>
+            <a asp-controller="Account" asp-action="Logout" class="btn-logout" title="Đăng xuất"><i class="fas fa-sign-out-alt"></i></a>
         </div>
-        <nav class="admin-nav">
-            <span>Chào, @(User.Identity?.Name)</span>
-            <a asp-controller="Account" asp-action="Logout" class="btn btn-sm btn-outline-light">Đăng xuất</a>
-        </nav>
     </header>
 
-    <div class="container-fluid">
-        <main role="main" class="pb-3 content" id="mainContent">
-            @RenderBody()
-        </main>
+    <div class="main-wrapper" id="mainContent">
+        @RenderBody()
     </div>
+
+    <button class="admin-chat-toggle" onclick="toggleAdminChat()">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <div class="admin-chat-box" id="adminChatBox">
+        <div class="ac-header">
+            <span><i class="fas fa-headset me-2"></i> CSKH (Admin)</span>
+            <span style="cursor:pointer" onclick="toggleAdminChat()"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="ac-body" id="chatList">
+            <div class="text-center text-muted small mt-5">Hệ thống hỗ trợ đã sẵn sàng.</div>
+        </div>
+        <div class="ac-footer">
+            <input type="text" class="ac-input" id="msgInput" placeholder="Nhập tin nhắn..." onkeypress="handleEnter(event)">
+            <button class="ac-btn-send" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+        <input type="hidden" id="currentUserName" value="@User.Identity.Name" />
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         function toggleSidebar() {
-            const sidebar = document.getElementById("sidebar");
-            const content = document.getElementById("mainContent");
-            sidebar.classList.toggle("hidden");
-            document.body.classList.toggle("sidebar-shown");
+            document.getElementById("sidebar").classList.toggle("hidden");
+            document.getElementById("header").classList.toggle("full-width");
+            document.getElementById("mainContent").classList.toggle("full-width");
         }
+
+        // --- SIGNALR LOGIC ---
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+        connection.on("ReceiveMessage", function (user, message) {
+            var chatList = document.getElementById("chatList");
+            var currentUser = document.getElementById("currentUserName").value;
+
+            // Xóa thông báo chờ
+            if(chatList.querySelector('.text-center')) chatList.innerHTML = "";
+
+            var msgDiv = document.createElement("div");
+            if (user === currentUser) {
+                msgDiv.className = "ac-msg ac-msg-out";
+                msgDiv.textContent = message;
+            } else {
+                var container = document.createElement("div");
+                container.innerHTML = `<div class='ac-sender-name'>${user}</div>`;
+                msgDiv.className = "ac-msg ac-msg-in";
+                msgDiv.textContent = message;
+                container.appendChild(msgDiv);
+                chatList.appendChild(container);
+                return;
+            }
+            chatList.appendChild(msgDiv);
+            chatList.scrollTop = chatList.scrollHeight;
+        });
+
+        connection.start().catch(err => console.error(err));
+
+        function sendMsg() {
+            var user = document.getElementById("currentUserName").value;
+            var input = document.getElementById("msgInput");
+            if (input.value.trim() !== "") {
+                connection.invoke("SendMessage", user, input.value).catch(err => console.error(err));
+                input.value = "";
+            }
+        }
+        function toggleAdminChat() {
+            var box = document.getElementById("adminChatBox");
+            box.style.display = (box.style.display === "flex") ? "none" : "flex";
+        }
+        function handleEnter(e) { if (e.key === 'Enter') sendMsg(); }
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js">
-        </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
-        </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
