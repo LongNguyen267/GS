@@ -1,0 +1,215 @@
+﻿@using GameStore.Models
+@model List<GameStore.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    decimal total = 0;
+    // Tính tổng tiền ban đầu khi tải trang
+    if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            if (item.Product != null)
+            {
+                total += item.Product.Price * item.Quantity;
+            }
+        }
+    }
+}
+
+<div class="cart-page-container">
+    <div class="cart-page-header">
+        <h1>Giỏ hàng của bạn</h1>
+        <p>Có <span id="cart-count">@(Model?.Count ?? 0)</span> sản phẩm trong giỏ hàng</p>
+    </div>
+
+    <div class="cart-layout">
+        <main class="cart-main-content">
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="cart-empty-message">
+                    <p>Giỏ hàng của bạn đang trống</p>
+                </div>
+            }
+            else
+            {
+                <div class="cart-items-list">
+                    @foreach (var item in Model)
+                    {
+                        if (item.Product != null)
+                        {
+                            var subtotal = item.Product.Price * item.Quantity;
+                            <div class="cart-item" id="cart-item-@item.ProductId">
+                                <div class="item-image">
+                                    <img src="@(item.Product.ImageUrl ?? "https://via.placeholder.com/150")" alt="@item.Product.Name">
+                                </div>
+                                <div class="item-details">
+                                    <h5>@item.Product.Name</h5>
+                                    <span class="item-price">@item.Product.Price.ToString("N0")đ</span>
+                                </div>
+
+                                <div class="item-quantity">
+                                    <div class="quantity-control">
+                                        <button class="btn-quantity-update" data-product-id="@item.ProductId" data-url="@Url.Action("DecreaseQuantity", "Cart")">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+
+                                        <input type="text" value="@item.Quantity" readonly id="quantity-@item.ProductId">
+
+                                        <button class="btn-quantity-update" data-product-id="@item.ProductId" data-url="@Url.Action("IncreaseQuantity", "Cart")">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="item-total-price" id="subtotal-@item.ProductId">
+                                    @subtotal.ToString("N0")đ
+                                </div>
+
+                                <div class="item-remove">
+                                    <button class="btn-remove" data-product-id="@item.ProductId"
+                                            data-url="@Url.Action("RemoveFromCart", "Cart")" title="Xóa sản phẩm">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </main>
+
+        <aside class="cart-sidebar">
+            <div class="order-summary-box">
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "cart-form" }))
+                {
+                    @Html.AntiForgeryToken()
+                }
+
+                <h3>Thông tin đơn hàng</h3>
+                <div class="summary-total">
+                    <span>Tổng tiền:</span>
+                    <span class="total-price" id="grand-total">@total.ToString("N0")đ</span>
+                </div>
+                <p class="summary-note">
+                    Phí vận chuyển sẽ được tính ở trang thanh toán.
+                    <br>
+                    Bạn cũng có thể nhập mã giảm giá ở trang thanh toán.
+                </p>
+                <a asp-action="Index" asp-controller="Checkout" class="btn btn-checkout"
+                   style="@((Model == null || Model.Count == 0) ? "pointer-events: none; background-color: #ccc;" : "")">
+                    THANH TOÁN
+                </a>
+                <a asp-controller="Products" asp-action="Index" class="btn-continue-shopping-link">
+                    <i class="fas fa-arrow-left"></i> Tiếp tục mua hàng
+                </a>
+            </div>
+        </aside>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lấy token bảo mật từ form
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            // --- Hàm helper để gửi Fetch (POST) ---
+            function sendCartUpdate(url, productId) {
+                return fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token // Gửi token bảo mật
+                    },
+                    body: 'productId=' + productId
+                });
+            }
+
+            // --- Hàm helper để cập nhật giao diện sau khi giỏ hàng thay đổi ---
+            function handleCartUpdate(data) {
+                if (data.success) {
+                    // Cập nhật tổng tiền và số lượng
+                    document.getElementById('grand-total').innerText = data.newGrandTotal;
+                    document.getElementById('cart-count').innerText = data.cartCount;
+
+                    // Kiểm tra giỏ hàng trống
+                    if (data.cartCount === 0) {
+                        document.querySelector('.cart-main-content').innerHTML =
+                            '<div class="cart-empty-message"><p>Giỏ hàng của bạn đang trống</p></div>';
+                        document.querySelector('.btn-checkout').style = "pointer-events: none; background-color: #ccc;";
+                    }
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+                }
+            }
+
+
+            // --- 1. SỰ KIỆN CHO NÚT TĂNG/GIẢM (+ / -) ---
+            document.querySelectorAll('.btn-quantity-update').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const productId = this.dataset.productId;
+                    const url = this.dataset.url;
+
+                    sendCartUpdate(url, productId)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Nếu item bị xóa (số lượng về 0)
+                                if (data.itemRemoved) {
+                                    document.getElementById('cart-item-' + productId).remove();
+                                } else {
+                                    // Cập nhật số lượng và thành tiền
+                                    document.getElementById('quantity-' + productId).value = data.newQuantity;
+                                    document.getElementById('subtotal-' + productId).innerText = data.newSubtotal;
+                                }
+
+                                // Cập nhật tổng tiền, số lượng, và kiểm tra giỏ hàng trống
+                                handleCartUpdate(data);
+                            } else {
+                                alert(data.message || 'Lỗi cập nhật số lượng.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Không thể cập nhật giỏ hàng.');
+                        });
+                });
+            });
+
+            // --- 2. SỰ KIỆN CHO NÚT XÓA (THÙNG RÁC) ---
+            document.querySelectorAll('.btn-remove').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                        return;
+                    }
+
+                    const productId = this.dataset.productId;
+                    const url = this.dataset.url;
+
+                    sendCartUpdate(url, productId)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.itemRemoved) {
+                                // Xóa item khỏi DOM
+                                document.getElementById('cart-item-' + data.removedProductId).remove();
+
+                                // Cập nhật tổng tiền, số lượng, và kiểm tra giỏ hàng trống
+                                handleCartUpdate(data);
+                            } else {
+                                alert(data.message || 'Lỗi khi xóa sản phẩm.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Không thể xóa sản phẩm.');
+                        });
+                });
+            });
+        });
+    </script>
+}

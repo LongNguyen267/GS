@@ -1,0 +1,106 @@
+﻿@model GameStore.ViewModels.NhapHangViewModel
+
+@{
+    ViewData["Title"] = "Quản lý Nhập hàng";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+}
+
+<div class="container py-5">
+    <h1>Quản lý Nhập hàng</h1>
+    <hr />
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Nhập Sản phẩm vào kho</h4>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+            <form asp-action="NhapSanPham" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Tên sản phẩm</label>
+                    <input type="text" class="form-control" id="productName" name="productName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="brandId" class="form-label">Chọn nhà cung cấp (Brand)</label>
+                    <select class="form-control" id="brandId" name="brandId" required>
+                        <option value="">-- Chọn nhà cung cấp --</option>
+                        @foreach (var brand in Model.Brands)
+                        {
+                            <option value="@brand.Id">@brand.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="categoryId" class="form-label">Loại sản phẩm</label>
+                    <select class="form-control" id="categoryId" name="categoryId" required>
+                        <option value="">-- Chọn loại sản phẩm --</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Số lượng</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" required min="1">
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Giá bán</label>
+                    <input type="number" class="form-control" id="price" name="price" required min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="importPrice" class="form-label">Giá nhập</label>
+                    <input type="number" class="form-control" id="importPrice" name="importPrice" required min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="productImage" class="form-label">Ảnh sản phẩm</label>
+                    <input type="file" class="form-control" id="productImage" name="productImage">
+                </div>
+                <button type="submit" class="btn btn-primary">Nhập kho</button>
+            </form>
+        </div>
+    </div>
+
+    <h4>Danh sách sản phẩm trong kho</h4>
+    @if (Model.Products != null && Model.Products.Any())
+    {
+        <table class="table table-striped table-hover mt-3">
+            <thead>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Nhà cung cấp</th>
+                    <th>Loại sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Giá nhập</th>
+                    <th>Giá bán</th>
+                    <th>Ngày nhập</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model.Products)
+                {
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>@product.Brand?.Name</td>
+                        <td>@product.Category?.Name</td>
+                        <td>@product.StockQuantity</td>
+                        <td>@product.ImportPrice?.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                        <td>@product.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                        <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Không có sản phẩm nào trong kho.</p>
+    }
+</div>

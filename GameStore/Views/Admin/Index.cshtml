@@ -1,0 +1,46 @@
+﻿@using GameStore.ViewModels
+@using System.Globalization
+@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard Tổng quan";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="dashboard-content">
+        <h1>Chào mừng đến với trang Admin</h1>
+        <hr />
+        <p>Chọn chức năng từ thanh điều hướng để bắt đầu quản lý hệ thống.</p>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Tổng doanh thu hôm nay</div>
+                    <div class="card-body">
+                        <h4 class="card-title">@Model.DailyRevenue.ToString("C0", new CultureInfo("vi-VN"))</h4>
+                        <p class="card-text">Dữ liệu được cập nhật mới nhất.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Tổng số đơn hàng mới</div>
+                    <div class="card-body">
+                        <h4 class="card-title">@Model.NewOrdersCount</h4>
+                        <p class="card-text">Đơn hàng đang chờ xử lý.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-header">Tổng số sản phẩm</div>
+                    <div class="card-body">
+                        <h4 class="card-title">@Model.TotalProductsCount</h4>
+                        <p class="card-text">Toàn bộ sản phẩm trong kho.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

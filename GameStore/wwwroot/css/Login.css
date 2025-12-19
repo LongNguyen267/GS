@@ -1,0 +1,241 @@
+﻿/* ---- General Setup ---- */
+:root {
+    --dark-blue: #23314B; /* Màu nền cột trái */
+    --red-accent: #E83649; /* Màu nút bấm và các điểm nhấn */
+    --light-grey: #f4f7f6; /* Màu nền của trang */
+    --text-color: #6c757d;
+    --heading-color: #333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.login-page-wrapper {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    display: flex;
+    width: 100%;
+    min-height: 85vh;
+    padding: 40px 20px;
+    /* THÊM DÒNG NÀY ĐỂ TẠO KHOẢNG CÁCH VỚI HEADER */
+    margin-top: 4rem;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: auto; /* Tự động canh giữa form */
+}
+
+/* ---- Auth Card Layout ---- */
+.auth-card {
+    display: flex;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* ---- Left Promo Column ---- */
+.auth-promo {
+    flex: 0 0 45%;
+    background-color: var(--dark-blue);
+    color: #fff;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.promo-content .store-name {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.promo-content h2 {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.promo-content p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.promo-content .social-icons a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2rem;
+    margin-right: 20px;
+    transition: color 0.3s;
+}
+
+    .promo-content .social-icons a:hover {
+        color: var(--red-accent);
+    }
+
+/* ---- Right Form Column ---- */
+.auth-form-container {
+    flex: 1;
+    padding: 40px 50px;
+}
+
+.auth-form h3 {
+    font-size: 1.8rem;
+    color: var(--heading-color);
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.input-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+    .input-group label {
+        display: none;
+    }
+
+    .input-group .form-control {
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #ccc;
+        padding: 10px 0;
+        font-size: 1rem;
+        background: transparent;
+        transition: border-color 0.3s;
+    }
+
+        .input-group .form-control:focus {
+            outline: none;
+            border-bottom-color: var(--red-accent);
+        }
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+}
+
+    .checkbox-group input {
+        margin-right: 8px;
+    }
+
+.link-forgot {
+    color: var(--heading-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    .link-forgot:hover {
+        text-decoration: underline;
+    }
+
+.btn-login {
+    width: 100%;
+    background-color: var(--red-accent);
+    color: #fff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+}
+
+    .btn-login:hover {
+        background-color: #d12b3c;
+    }
+
+    .btn-login i {
+        margin-left: 8px;
+        font-size: 0.8rem;
+    }
+
+.separator {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+    .separator::before, .separator::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .separator span {
+        padding: 0 15px;
+    }
+
+.social-login {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-icon {
+    color: var(--text-color);
+    border: 1px solid #e0e0e0;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .social-icon:hover {
+        color: var(--red-accent);
+        border-color: var(--red-accent);
+    }
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+    .register-link a {
+        color: var(--red-accent);
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+.text-danger {
+    color: var(--red-accent) !important;
+    font-size: 0.85rem;
+    text-align: left;
+    display: block;
+    margin-top: 5px;
+}
+
+.validation-summary {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 15px;
+    text-align: left;
+}

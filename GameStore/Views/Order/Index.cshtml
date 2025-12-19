@@ -1,0 +1,53 @@
+﻿@model IEnumerable<GameStore.Models.Order>
+
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<div class="container py-5">
+    <h1>Đơn hàng của tôi</h1>
+    <hr />
+
+    @if (!Model.Any())
+    {
+        <p>Bạn chưa có đơn hàng nào.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@(order.OrderDate?.ToString("dd/MM/yyyy"))</td>
+                        <td>@order.TotalAmount.ToString("C")</td>
+                        <td>@order.Status</td>
+                        <td>
+                            @if (order.Status == "Shipping")
+                            {
+                                <form asp-action="ConfirmReceipt" asp-controller="Order" method="post">
+                                    <input type="hidden" name="orderId" value="@order.Id" />
+                                    <button type="submit" class="btn btn-primary">Xác nhận nhận hàng</button>
+                                </form>
+                            }
+                            else if (order.Status == "Delivered")
+                            {
+                                <span class="text-success">Đã giao hàng</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

@@ -1,0 +1,280 @@
+﻿/* ======================================= */
+/* === STYLE CHO TRANG THANH TOÁN (CHECKOUT) === */
+/* ======================================= */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    --primary-color: #007bff;
+    --primary-red: #D70018;
+    --success-color: #28a745;
+    --text-color: #212529; /* Màu chữ đen chính */
+    --text-muted-color: #6c757d;
+    --bg-color: #ffffff;
+    --subtle-bg-color: #f8f9fa;
+    --border-color: #dee2e6;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.checkout-page-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 15px;
+    font-family: var(--font-family);
+    padding-top: 50px;
+    color: var(--text-color);
+}
+
+    /* THAY ĐỔI: Ép các tiêu đề h1, h3 phải có màu đen */
+    .checkout-page-container h1,
+    .checkout-page-container h3 {
+        color: var(--text-color);
+    }
+
+.checkout-page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+    .checkout-page-header p {
+        font-size: 16px;
+        color: var(--text-color);
+    }
+
+.checkout-layout {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* CỘT BÊN TRÁI: THÔNG TIN KHÁCH HÀNG */
+.customer-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.form-section {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+    .form-section h3 {
+        font-size: 20px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .form-section h3 i {
+            color: var(--primary-red);
+        }
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: var(--text-color);
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-red);
+        box-shadow: 0 0 0 3px rgba(215, 0, 24, 0.15);
+    }
+
+/* Tùy chỉnh cho Phương thức thanh toán */
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.payment-method-box {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: block;
+}
+
+    .payment-method-box:has(input:checked) {
+        border-color: var(--primary-red);
+        box-shadow: 0 0 0 3px rgba(215, 0, 24, 0.15);
+    }
+
+    .payment-method-box:hover {
+        border-color: var(--primary-color);
+    }
+
+    .payment-method-box input[type="radio"] {
+        display: none;
+    }
+
+.payment-method-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 500;
+}
+
+    .payment-method-content i {
+        font-size: 20px;
+        width: 25px;
+        text-align: center;
+        color: var(--primary-red);
+    }
+
+/* CỘT BÊN PHẢI: TÓM TẮT ĐƠN HÀNG */
+.order-summary {
+    width: 400px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 120px;
+}
+
+.order-summary-box {
+    background-color: var(--subtle-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.order-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 0;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+    .order-item + .order-item {
+        border-top: 1px solid #e9ecef;
+    }
+
+    .order-item .item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+
+    .order-item .item-info {
+        flex-grow: 1;
+    }
+
+    .order-item .item-name {
+        display: block;
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+    .order-item .item-quantity {
+        font-size: 13px;
+        color: var(--text-muted-color);
+    }
+
+    .order-item .item-price {
+        font-weight: 500;
+    }
+
+.order-total {
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+    .total-row.grand-total {
+        font-weight: 700;
+        font-size: 18px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 15px;
+    }
+
+    .total-row .final-price {
+        color: var(--primary-red);
+        font-size: 22px;
+    }
+
+.btn-place-order {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    background-color: var(--primary-red);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+    .btn-place-order:hover {
+        background-color: #b80014;
+        transform: translateY(-2px);
+    }
+
+.back-to-cart-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: var(--text-muted-color);
+    text-decoration: none;
+    font-size: 15px;
+}
+
+    .back-to-cart-link:hover {
+        color: var(--text-color);
+    }
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 992px) {
+    .checkout-layout {
+        flex-direction: column-reverse;
+    }
+
+    .order-summary {
+        width: 100%;
+        position: static;
+        margin-bottom: 30px;
+    }
+}

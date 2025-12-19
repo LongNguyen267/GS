@@ -1,0 +1,112 @@
+﻿@* BƯỚC QUAN TRỌNG NHẤT: Khai báo ViewModel để View có thể nhận dữ liệu từ Controller *@
+@model GameStore.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<main>
+    @* --- PHẦN SLIDER HERO CỦA BẠN (GIỮ NGUYÊN) --- *@
+    <section class="hero">
+        <div class="slider-container">
+            <div class="slide active" data-slide="0">
+                <div class="slide-background" style="background-image: url('/image/PS.webp');"></div>
+                <div class="slide-overlay" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));"></div>
+                <div class="slide-content">
+                    <p>Máy Game mạnh mẽ nhất</p>
+                    <h1>PS5 / PS5 Pro</h1>
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("Sony PlayStation 5 (PS5) Standard Edition"))14" class="cta-button">Mua Ngay</a>
+                </div>
+            </div>
+            <div class="slide" data-slide="1">
+                <div class="slide-background" style="background-image: url('/image/xbox.jpeg');"></div>
+                <div class="slide-overlay" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));"></div>
+                <div class="slide-content">
+                    <p>Hiệu năng không đối thủ</p>
+                    <h1>Xbox Series X</h1>
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("Microsoft Xbox Series X 1TB"))5" class="cta-button">Khám phá</a>
+                </div>
+            </div>
+            <div class="slide" data-slide="2">
+                <div class="slide-background" style="background-image: url('/image/NS2.jpg');"></div>
+                <div class="slide-overlay" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));"></div>
+                <div class="slide-content">
+                    <p>Chơi game mọi lúc, mọi nơi</p>
+                    <h1>Nintendo Switch</h1>
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.FeaturedProducts.FirstOrDefault(p => p.Name.Contains("Nintendo Switch 2"))17" class="cta-button">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+        <div class="slider-controls">
+            <button class="control-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="control-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="slider-dots"></div>
+    </section>
+
+    @* --- PHẦN DANH MỤC ĐÃ ĐƯỢC SỬA LẠI LINK --- *@
+    <section class="categories-section">
+        <div class="container">
+            <div class="category-grid">
+                @* SỬA LẠI LINK Ở ĐÂY *@
+                <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" class="category-item">
+                    <img src="/image/Game.png" alt="Máy Game">
+                    <span>Máy Game</span>
+                </a>
+                @* SỬA LẠI LINK Ở ĐÂY *@
+                <a asp-controller="Products" asp-action="Index" asp-route-type="PhuKien" class="category-item">
+                    <img src="/image/console.png" alt="Phụ kiện">
+                    <span>Phụ kiện</span>
+                </a>
+                @* SỬA LẠI LINK Ở ĐÂY *@
+                <a asp-controller="Products" asp-action="Index" asp-route-type="DiaGame" class="category-item">
+                    <img src="/image/gamedics.png" alt="Đĩa Game">
+                    <span>Đĩa/Băng Game</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    @* --- PHẦN SẢN PHẨM NỔI BẬT (GIỮ NGUYÊN) --- *@
+    <hr />
+    <section class="section-content padding-y">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <header class="section-heading">
+                        <h3 class="section-title">Sản phẩm nổi bật</h3>
+                    </header>
+
+                    <div class="carousel-container">
+                        <button class="arrow prev-arrow" disabled>&#10094;</button>
+                        <div class="product-slider-wrapper">
+                            <div class="product-slider">
+                                @* Vòng lặp này sẽ duyệt qua danh sách FeaturedProducts từ ViewModel *@
+                                @foreach (var product in Model.FeaturedProducts)
+                                {
+                                    <div class="product-card">
+                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="img-wrap">
+                                            <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/image/default-product-image.png" : product.ImageUrl)" alt="@product.Name">
+                                        </a>
+                                        <div class="info-wrap">
+                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="title" title="@product.Name">@product.Name</a>
+                                            <div class="price-wrap mt-2">
+                                                <span class="price">@product.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="btn btn-sm btn-primary float-right">Xem</a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <button class="arrow next-arrow">&#10095;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>

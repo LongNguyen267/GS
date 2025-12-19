@@ -1,0 +1,25 @@
+﻿@model GameStore.Models.Product
+
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+}
+
+<div class="crud-container">
+    <h1>Xóa sản phẩm</h1>
+    <h3>Bạn có chắc chắn muốn xóa sản phẩm này không?</h3>
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">Tên sản phẩm:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+            <dt class="col-sm-3">Giá:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Price)</dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Xóa" class="btn btn-danger" />
+            <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+        </form>
+    </div>
+</div>

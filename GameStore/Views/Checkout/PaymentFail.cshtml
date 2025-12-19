@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Thanh toán thất bại";
+}
+
+<style>
+    /* Sử dụng lại layout của trang Success nhưng đổi màu sắc */
+    .fail-page-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 20px;
+        background-color: #f8f9fa;
+        min-height: 60vh;
+    }
+
+    .fail-card {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+        border-top: 5px solid #dc3545; /* Viền đỏ trên cùng */
+    }
+
+    .icon-fail-circle {
+        font-size: 80px;
+        color: #dc3545; /* Màu đỏ báo lỗi */
+        margin-bottom: 20px;
+    }
+
+    .fail-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #dc3545;
+        margin-bottom: 10px;
+    }
+
+    .fail-message {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+        font-size: 16px;
+    }
+
+    .error-detail-box {
+        background-color: #fff5f5;
+        border: 1px dashed #dc3545;
+        color: #c82333;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        font-family: monospace;
+        font-size: 14px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .btn-retry {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-retry:hover {
+            background-color: #c82333;
+            color: white;
+        }
+
+    .btn-home {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #fff;
+        color: #555;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-home:hover {
+            background-color: #f1f1f1;
+            border-color: #bbb;
+            color: #333;
+        }
+</style>
+
+<div class="fail-page-container">
+    <div class="fail-card">
+        <div class="icon-fail-circle">
+            <i class="fas fa-times-circle"></i>
+        </div>
+
+        <h1 class="fail-title">Thanh toán thất bại!</h1>
+
+        <p class="fail-message">
+            Rất tiếc, giao dịch của bạn không thể thực hiện được.<br />
+            Vui lòng kiểm tra lại thông tin thẻ hoặc thử phương thức thanh toán khác.
+        </p>
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="error-detail-box">
+                <i class="fas fa-exclamation-triangle"></i> Chi tiết: @TempData["Message"]
+            </div>
+        }
+
+        <div class="action-buttons">
+            <a asp-controller="Home" asp-action="Index" class="btn-home">
+                <i class="fas fa-home"></i> Về trang chủ
+            </a>
+
+            <a asp-controller="Products" asp-action="Index" class="btn-retry">
+                <i class="fas fa-shopping-cart"></i> Tiếp tục mua sắm
+            </a>
+        </div>
+    </div>
+</div>

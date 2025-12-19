@@ -1,0 +1,212 @@
+﻿/* =================================================================== */
+/* === CSS TRANG CHI TIẾT SẢN PHẨM (NỀN TRẮNG) === */
+/* =================================================================== */
+
+.product-detail-container {
+    max-width: 1200px;
+    margin: 120px auto 40px auto;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    color: #333; /* Đổi màu chữ chính thành đen */
+    background-color: #fff; /* Nền trắng cho toàn bộ container */
+}
+
+.breadcrumb {
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+    color: #666;
+}
+
+    .breadcrumb a {
+        color: #666;
+        text-decoration: none;
+    }
+
+        .breadcrumb a:hover {
+            color: #000;
+        }
+
+    .breadcrumb span {
+        margin: 0 8px;
+    }
+
+.detail-main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+/* --- Cột ảnh (bên trái) --- */
+.product-gallery .main-image {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+    .product-gallery .main-image img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+    }
+
+/* --- Cột thông tin (bên phải) --- */
+.product-info .product-title {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 15px;
+}
+
+.product-info .product-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.product-info .stock-status {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.product-info .product-price {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #d90429;
+    margin-bottom: 25px;
+}
+
+.product-actions {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #eee;
+}
+
+    .product-actions form {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+.quantity-selector label {
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.quantity-selector input[type="number"] {
+    width: 70px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.add-to-cart-btn-detail {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-transform: uppercase;
+    font-size: 1rem;
+}
+
+    .add-to-cart-btn-detail:hover {
+        background-color: #0056b3;
+    }
+
+.product-description {
+    margin-top: 30px;
+}
+
+    .product-description h4 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    .product-description p {
+        line-height: 1.8;
+        color: #555;
+    }
+
+/* --- Responsive cho điện thoại --- */
+@media (max-width: 768px) {
+    .detail-main-content {
+        grid-template-columns: 1fr; /* Chuyển thành 1 cột */
+    }
+
+    .product-info .product-title {
+        font-size: 1.5rem;
+    }
+
+    .product-info .product-price {
+        font-size: 1.8rem;
+    }
+
+    .product-actions form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* --- CSS cho sản phẩm liên quan --- */
+.related-products {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid #eee;
+}
+
+    .related-products h2 {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+.related-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.related-products .product-card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+    .related-products .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+.related-products .product-image-link img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    padding: 10px;
+}
+
+.related-products .product-card-content {
+    padding: 15px;
+}
+
+    .related-products .product-card-content h3 {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+        .related-products .product-card-content h3 a {
+            text-decoration: none;
+            color: #333;
+        }
+
+.related-products .price {
+    font-weight: 600;
+    color: #d90429;
+}

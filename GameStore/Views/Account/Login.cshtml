@@ -1,0 +1,75 @@
+﻿@model GameStore.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+}
+
+<div class="login-page-wrapper" style="margin-top: 50px;">
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-promo">
+                <div class="promo-content">
+                    <h1 class="store-name">ChillGame</h1>
+                    <h2>Đăng nhập để khám phá</h2>
+                    <p>Game là để thư giãn, máy game là để phục vụ chúng ta thư giãn. Nếu chưa có máy hãy sắm ngay tại ChillGame nhé</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-google-plus-g"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auth-form-container">
+                <form asp-controller="Account" asp-action="Login" method="post" class="auth-form">
+                    <h3>Chào mừng trở lại!</h3>
+                    <div asp-validation-summary="ModelOnly" class="text-danger validation-summary"></div>
+
+                    <div class="input-group">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="Password"></label>
+                        <input asp-for="Password" class="form-control" placeholder="Mật khẩu" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="options">
+                        <div class="checkbox-group">
+                            <input asp-for="RememberMe" />
+                            <label asp-for="RememberMe">@Html.DisplayNameFor(m => m.RememberMe)</label>
+                        </div>
+                        <a asp-action="ForgotPassword" class="text-primary">Quên mật khẩu?</a>
+                    </div>
+
+                    <button type="submit" class="btn-login">Đăng nhập <i class="fas fa-chevron-right"></i></button>
+
+                    <div class="separator"><span>hoặc đăng nhập với</span></div>
+
+                    <div class="social-login">
+                        <a href="mailto:ChillGameStoreBITV@gmail.com" class="social-icon"><i class="fab fa-google"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    </div>
+
+                    <div class="register-link">
+                        Chưa có tài khoản? <a asp-action="Register">Đăng ký ngay</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,143 @@
+﻿@model GameStore.Models.Notification
+
+@{
+    ViewData["Title"] = "Quản lý Mã giảm giá";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-success">
+            <i class="fas fa-ticket-alt"></i> Tạo Mã Giảm Giá & Thông Báo
+        </h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="CreateVoucher" method="post" enctype="multipart/form-data">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="VoucherCode" class="form-label">Mã giảm giá (Code)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <input asp-for="VoucherCode" class="form-control" placeholder="VD: SALE50" required />
+                        </div>
+                        <span asp-validation-for="VoucherCode" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="DiscountPercent" class="form-label">Giảm bao nhiêu %?</label>
+                        <div class="input-group">
+                            <input asp-for="DiscountPercent" type="number" min="0" max="100" class="form-control" placeholder="VD: 20" required />
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="VoucherQuantity" class="form-label">Số lượng mã</label>
+                        <div class="input-group">
+                            <input asp-for="VoucherQuantity" type="number" min="0" class="form-control" placeholder="VD: 50" />
+                            <span class="input-group-text">Lượt</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold text-primary">Ảnh Banner Thông Báo (Tùy chọn)</label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" onchange="previewImage(this)" />
+                <div class="form-text text-muted">Upload ảnh để thông báo hiển thị đẹp hơn trên trang chủ.</div>
+                <div class="mt-2">
+                    <img id="imgPreview" src="#" alt="Xem trước" style="display:none; height: 100px; border-radius: 5px; border: 1px dashed #ccc;" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Tiêu đề thông báo (Bỏ trống sẽ tự tạo)</label>
+                        <input asp-for="Title" class="form-control" placeholder="VD: Tặng bạn mã giảm giá sốc..." />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light border-0 mb-3">
+                <div class="card-body">
+                    <label class="form-label fw-bold text-success">Phạm vi áp dụng (Không chọn = Giảm tất cả)</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="ApplyToBrandId" class="form-label">Chỉ áp dụng cho Hãng:</label>
+                                <select asp-for="ApplyToBrandId" id="ddlBrand" class="form-control" asp-items="@(new SelectList(ViewBag.Brands, "Id", "Name"))">
+                                    <option value="0">-- Tất cả các hãng --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="ApplyToCategoryId" class="form-label">Chỉ áp dụng cho Loại:</label>
+                                <select asp-for="ApplyToCategoryId" id="ddlCategory" class="form-control" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+                                    <option value="">-- Tất cả các loại --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <button type="submit" class="btn btn-success">
+                <i class="fa fa-bell"></i> Lưu & Phát Thông Báo
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Script xem trước ảnh
+        function previewImage(input) {
+            var preview = document.getElementById('imgPreview');
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Script lọc Hãng/Loại (Giữ nguyên của ní)
+        $(document).ready(function () {
+            $('#ddlBrand').change(function () {
+                var selectedBrandId = $(this).val();
+                var $catDropdown = $('#ddlCategory');
+                $catDropdown.empty();
+                $catDropdown.append('<option value="">Đang tải dữ liệu...</option>');
+                $.ajax({
+                    url: '/Admin/GetCategoriesByBrand',
+                    type: 'GET',
+                    data: { brandId: selectedBrandId },
+                    success: function (res) {
+                        $catDropdown.empty();
+                        $catDropdown.append('<option value="">-- Tất cả các loại --</option>');
+                        if (res && res.length > 0) {
+                            $.each(res, function (i, item) {
+                                $catDropdown.append(`<option value="${item.id}">${item.name}</option>`);
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,138 @@
+﻿@model GameStore.Models.Order
+
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+}
+
+<style>
+    /* CSS nội bộ để đảm bảo giao diện đẹp ngay lập tức */
+    .success-page-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 20px;
+        background-color: #f8f9fa;
+        min-height: 60vh;
+    }
+
+    .success-card {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .icon-check-circle {
+        font-size: 80px;
+        color: #28a745;
+        margin-bottom: 20px;
+    }
+
+    .success-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .success-message {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .order-details-box {
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        text-align: left;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+            border-top: 1px dashed #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+    .detail-label {
+        color: #666;
+    }
+
+    .detail-value {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .btn-home {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #fff;
+        color: #555;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-home:hover {
+            background-color: #f1f1f1;
+            border-color: #bbb;
+            color: #333;
+        }
+</style>
+
+<div class="success-page-container">
+    <div class="success-card">
+        <div class="icon-check-circle">
+            <i class="fas fa-check-circle"></i>
+        </div>
+
+        <h1 class="success-title">Thanh toán thành công!</h1>
+
+        <p class="success-message">
+            Giao dịch VNPAY của bạn đã được xác nhận.<br />
+            Một email chi tiết về đơn hàng đã được gửi đến hộp thư của bạn.
+        </p>
+
+        @if (Model != null)
+        {
+            <div class="order-details-box">
+                <div class="detail-row">
+                    <span class="detail-label">Mã đơn hàng</span>
+                    <span class="detail-value">#@Model.Id</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Ngày thanh toán</span>
+                    <span class="detail-value">@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phương thức</span>
+                    <span class="detail-value" style="color: #005ba3; font-weight: bold;">VNPAY QR/ATM</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Tổng thanh toán</span>
+                    <span class="detail-value" style="color: #d9534f;">@Model.TotalAmount.ToString("N0")đ</span>
+                </div>
+            </div>
+        }
+
+        <a asp-controller="Home" asp-action="Index" class="btn-home">
+            Về trang chủ
+        </a>
+    </div>
+</div>

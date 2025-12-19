@@ -1,0 +1,84 @@
+﻿/* --- CSS for Order Confirmation Page --- */
+.confirmation-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.success-icon .fa-check-circle {
+    font-size: 64px;
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.confirmation-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #343a40;
+}
+
+.confirmation-message {
+    font-size: 16px;
+    color: #6c757d;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.order-summary {
+    border-top: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 15px;
+}
+
+    .summary-item span {
+        color: #6c757d;
+    }
+
+    .summary-item strong {
+        color: #343a40;
+        font-weight: 600;
+    }
+
+.confirmation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Nút bấm có viền */
+.btn-secondary-outline {
+    background-color: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+    .btn-secondary-outline:hover {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+/* Nút bấm chính (Tái sử dụng từ Bootstrap nếu có) */
+.btn-primary {
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}

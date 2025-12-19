@@ -1,0 +1,31 @@
+﻿@model IEnumerable<GameStore.Models.Product>
+
+<div class="product-grid-display">
+    @foreach (var product in Model)
+    {
+        <div class="product-card">
+            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="product-image-link">
+                @if (!string.IsNullOrEmpty(product.Status) && product.Status.Equals("Sale", StringComparison.OrdinalIgnoreCase))
+                {
+                    <span class="product-tag tag-sale">Giảm giá</span>
+                }
+                <img src="@Url.Content(product.ImageUrl ?? "~/image/default-product.png")" alt="@product.Name">
+            </a>
+            <div class="product-card-content">
+                <h3><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">@product.Name</a></h3>
+                <div class="price">@product.Price.ToString("N0")đ</div>
+
+                @* --- BƯỚC 1: THÊM ĐIỀU KIỆN KIỂM TRA TRANG HIỆN TẠI --- *@
+                @* Code này sẽ kiểm tra xem Controller có phải là "Home" không *@
+                @if (ViewContext.RouteData.Values["controller"].ToString() != "Home")
+                {
+                    @* --- BƯỚC 2: NÚT CHỈ HIỂN THỊ NẾU KHÔNG PHẢI TRANG CHỦ --- *@
+                    <button type="button" class="add-cart-btn" data-product-id="@product.Id">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                }
+                @* Nếu là trang chủ, nút sẽ được bỏ qua và không hiển thị *@
+            </div>
+        </div>
+    }
+</div>

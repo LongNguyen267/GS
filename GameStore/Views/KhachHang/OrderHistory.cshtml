@@ -1,0 +1,60 @@
+﻿@model IEnumerable<GameStore.Models.Order>
+
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/order-history.css" asp-append-version="true" />
+}
+<div class="container order-history-page">
+    <div class="row">
+        <div class="col-12">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="empty-history-alert">
+                    Bạn chưa có đơn hàng nào.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th>Ngày đặt</th>
+                                <th>Trạng thái</th>
+                                <th>Tổng tiền</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td>#@order.Id</td>
+                                    <td>@order.OrderDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@order.Status</td>
+                                    <td><strong>@order.TotalAmount.ToString("N0")đ</strong></td>
+                                    <td>
+                                        <a asp-action="OrderDetails" asp-controller="KhachHang" asp-route-id="@order.Id" class="btn-view-details">
+                                            XEM CHI TIẾT
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

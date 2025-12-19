@@ -1,0 +1,101 @@
+﻿/* wwwroot/css/custom-auth.css - PHIÊN BẢN ĐƠN GIẢN */
+
+/* Nền cho trang */
+body.auth-page {
+    background-color: #f0f2f5; /* Một màu xám rất nhạt, sạch sẽ */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Thẻ form chính */
+.card-auth {
+    background: #ffffff;
+    padding: 2.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    width: 100%;
+    max-width: 420px; /* Giới hạn chiều rộng tối đa của form */
+}
+
+/* Biểu tượng chìa khóa nhỏ bên trên tiêu đề */
+.auth-icon {
+    font-size: 2rem;
+    color: #007bff;
+    background-color: #e7f3ff;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+/* Tiêu đề và văn bản */
+.card-auth h3 {
+    color: #1c1e21; /* Màu đen đậm */
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.card-auth p {
+    color: #606770; /* Màu xám cho văn bản phụ */
+    font-size: 0.95rem;
+}
+
+
+/* Ô nhập liệu */
+.form-floating > .form-control {
+    background-color: #f5f6f7;
+    border: 1px solid #ccd0d5;
+    color: #1c1e21;
+    border-radius: 6px;
+    height: 50px;
+}
+
+    .form-floating > .form-control:focus {
+        background-color: #ffffff;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+
+/* Label cho ô nhập liệu */
+.form-floating > label {
+    color: #606770;
+}
+
+
+/* Nút bấm */
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+/* Đường kẻ ngang */
+hr {
+    border-color: #e0e0e0;
+}
+
+/* Link quay lại */
+.card-auth .small {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    .card-auth .small:hover {
+        text-decoration: underline;
+    }

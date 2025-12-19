@@ -1,0 +1,167 @@
+﻿@model IEnumerable<GameStore.Models.Product>
+
+@{
+    ViewData["Title"] = ViewData["PageTitle"]?.ToString() ?? "Sản phẩm";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/products.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/subcategory-filter.css" asp-append-version="true" />
+}
+
+@* SỬA Ở ĐÂY: Thêm điều kiện IF để chỉ hiển thị Hero Section ở trang "Máy Game" *@
+@if (ViewData["CurrentType"] as string == "MayGame" || string.IsNullOrEmpty(ViewData["CurrentType"] as string))
+{
+    <section class="hero-product-page">
+        <div class="split-hero-container">
+            <div class="text-overlay-box">
+                <h2>Khám Phá Thế Giới Game Đỉnh Cao Cùng PlayStation 5</h2>
+                <p>Trải nghiệm tốc độ với ổ cứng SSD siêu nhanh và đắm chìm trong thế giới game sống động với đồ họa tuyệt đẹp.</p>
+            </div>
+            <img class="main-hero-image" src="/image/product/ps5-main-product.jpg" alt="PS5">
+            <div class="product-overlay-box">
+                <p class="box-title">Sản phẩm nổi bật</p>
+                <a href="#" class="featured-product-link">
+                    <img class="featured-product-image" src="/image/product/ps5taycam.jpg" alt="PS5 Controller">
+                    <div class="featured-product-info">
+                        <p class="product-name">PlayStation 5 Console</p>
+                        <p class="product-price">
+                            <span>13,500,000đ</span>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+}
+
+
+<div class="product-page-container">
+    @* Breadcrumb và Tiêu đề động *@
+    <nav class="breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+        <span>/</span>
+        <a asp-controller="Products" asp-action="Index">Sản phẩm</a>
+        @if (ViewData["PageTitle"] != null)
+        {
+            <span>/</span>
+            <a>@ViewData["PageTitle"]</a>
+        }
+    </nav>
+    <h1 class="page-title">@ViewData["PageTitle"]</h1>
+
+    @* BỘ LỌC CŨ CHO TRANG MÁY GAME (ĐÃ THÊM DATA-ATTRIBUTE) *@
+    @if (ViewData["CurrentType"] as string == "MayGame")
+    {
+        <div class="category-icon-filter">
+            <h3>Loại</h3>
+            <div class="category-icon-list">
+                <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" class="filter-item" data-search-query="">
+                    <img src="https://i.imgur.com/example-all-icon.png" alt="Tất cả" /> <span>Tất cả</span>
+                </a>
+                <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" asp-route-searchQuery="PS5" class="filter-item" data-search-query="PS5">
+                    <img src="~/image/product/logo/ps5-logo.png" alt="PS5" /> <span>PS5</span>
+                </a>
+                <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" asp-route-searchQuery="PS4" class="filter-item" data-search-query="PS4">
+                    <img src="~/image/product/logo/ps4-logo.jpg" alt="PS4" /> <span>PS4</span>
+                </a>
+                <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" asp-route-searchQuery="Nintendo" class="filter-item" data-search-query="Nintendo">
+                    <img src="~/image/product/logo/nin-logo.png" alt="Nintendo" /> <span>Nintendo</span>
+                </a>
+                <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" asp-route-searchQuery="Xbox" class="filter-item" data-search-query="Xbox">
+                    <img src="~/image/product/logo/Xbox-Logo.png" alt="Xbox" /> <span>Xbox</span>
+                </a>
+                <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" asp-route-searchQuery="Handheld PC" class="filter-item" data-search-query="Handheld PC">
+                    <img src="~/image/product/logo/handheld-logo.webp" alt="Handheld PC" /> <span>Handheld PC</span>
+                </a>
+                <a asp-controller="Products" asp-action="Index" asp-route-type="MayGame" asp-route-searchQuery="Miyoo" class="filter-item" data-search-query="Miyoo">
+                    <img src="~/image/product/logo/retro-logo.webp" alt="Retro" /> <span>Retro</span>
+                </a>
+            </div>
+        </div>
+    }
+
+    @* BỘ LỌC MỚI CHO TRANG PHỤ KIỆN *@
+    <partial name="_SubCategoryFilter" />
+
+    @* Thanh công cụ (Hiển thị, sắp xếp) *@
+    <div class="product-toolbar">
+        <div class="product-count-info">
+            Hiển thị @Model.Count() kết quả
+        </div>
+        <div class="product-sort-options">
+            <label for="sort-by">Sắp xếp:</label>
+            <select id="sort-by" name="sort-by">
+                <option value="default">Mặc định</option>
+                <option value="price-asc">Giá tăng dần</option>
+                <option value="price-desc">Giá giảm dần</option>
+            </select>
+        </div>
+    </div>
+
+    @* Lưới hiển thị sản phẩm *@
+    <div id="productGridContainer">
+        @await Html.PartialAsync("_ProductGridPartial", Model)
+    </div>
+</div>
+
+@section Scripts {
+    @* SCRIPT AJAX MỚI, DÙNG CHUNG CHO CẢ 2 TRANG *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sortSelect = document.getElementById('sort-by');
+            const productGridContainer = document.getElementById('productGridContainer');
+            const productCountInfo = document.querySelector('.product-count-info');
+            const filterItems = document.querySelectorAll('.filter-item');
+
+            let currentType = '@(ViewData["CurrentType"] as string ?? "")';
+            let currentSearchQuery = '';
+            let currentCategory = '';
+            let currentSortOrder = 'default';
+
+            function fetchProducts() {
+                let url = `@Url.Action("Index", "Products")?type=${encodeURIComponent(currentType)}&sortOrder=${currentSortOrder}`;
+                if (currentType === 'MayGame') {
+                    url += `&searchQuery=${encodeURIComponent(currentSearchQuery)}`;
+                } else if (currentType === 'PhuKien' || currentType === 'DiaGame') { // Mở rộng cho cả Đĩa Game
+                    url += `&category=${encodeURIComponent(currentCategory)}`;
+                }
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    productGridContainer.innerHTML = html;
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    const count = tempDiv.querySelectorAll('.product-card').length;
+                    productCountInfo.textContent = `Hiển thị ${count} kết quả`;
+                })
+                .catch(error => console.error('Error fetching products:', error));
+            }
+
+            filterItems.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    if (currentType === 'MayGame') {
+                        currentSearchQuery = this.dataset.searchQuery || '';
+                    } else if (currentType === 'PhuKien' || currentType === 'DiaGame') {
+                        currentCategory = this.dataset.category || '';
+                    }
+
+                    fetchProducts();
+
+                    filterItems.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            sortSelect.addEventListener('change', function () {
+                currentSortOrder = this.value;
+                fetchProducts();
+            });
+        });
+    </script>
+}

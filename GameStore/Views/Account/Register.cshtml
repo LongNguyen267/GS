@@ -1,0 +1,91 @@
+﻿@model GameStore.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
+}
+
+<div class="page-background">
+    <h1>Chào mừng đến với ChillGame</h1>
+    <p>Nền tảng gaming hàng đầu Việt Nam</p>
+    <button id="open-register-modal-btn" class="btn-open-modal">Đăng ký</button>
+</div>
+
+
+<div id="register-modal" class="modal-overlay">
+    <div class="modal-card">
+        <button class="modal-close-btn">&times;</button>
+
+        <div class="modal-header">
+            <h2>ĐĂNG KÝ MUA HÀNG</h2>
+            <p>Hãy để chúng tôi phục vụ bạn</p>
+        </div>
+
+        <form asp-action="Register" class="modal-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="floating-label-group">
+                <input asp-for="FullName" class="form-control" placeholder=" " required />
+                <label asp-for="FullName">Tên đăng nhập:</label>
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="floating-label-group">
+                <input asp-for="Email" class="form-control" placeholder=" " required />
+                <label asp-for="Email">Email:</label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="floating-label-group">
+                <input asp-for="Password" class="form-control" placeholder=" " required />
+                <label asp-for="Password">Mật khẩu:</label>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="floating-label-group">
+                <input asp-for="ConfirmPassword" class="form-control" placeholder=" " required />
+                <label asp-for="ConfirmPassword">Xác nhận mật khẩu:</label>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn-submit">ĐĂNG KÝ NGAY</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Lấy các phần tử cần thiết từ DOM
+        const openModalBtn = document.getElementById('open-register-modal-btn');
+        const modal = document.getElementById('register-modal');
+        const closeModalBtn = modal.querySelector('.modal-close-btn');
+
+        // Hàm để mở modal
+        function openModal() {
+            modal.style.display = 'flex';
+        }
+
+        // Hàm để đóng modal
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Gán sự kiện click cho các nút
+        openModalBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+
+        // Đóng modal khi click ra ngoài vùng popup
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+}

@@ -1,0 +1,63 @@
+﻿/* --- CSS cho thanh lọc danh mục con --- */
+.subcategory-filters {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.filter-title {
+    font-weight: bold;
+    margin-right: 20px;
+    color: #555;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.filter-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
+    width: 80px; /* Có thể điều chỉnh */
+    height: 80px; /* Có thể điều chỉnh */
+}
+
+    .filter-item:hover {
+        background-color: #e9e9e9;
+        border-color: #ddd;
+    }
+
+    .filter-item.active { /* Thêm class active nếu muốn tô đậm mục đang chọn */
+        border-color: #007bff;
+        background-color: #e7f1ff;
+        font-weight: bold;
+    }
+
+    .filter-item img {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 8px;
+        object-fit: contain;
+    }
+
+    .filter-item span {
+        font-size: 13px;
+        text-align: center;
+    }

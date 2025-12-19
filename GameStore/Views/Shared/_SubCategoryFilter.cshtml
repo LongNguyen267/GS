@@ -1,0 +1,30 @@
+﻿@using GameStore.Models
+
+@{
+    // Lấy type của trang hiện tại (sẽ là "PhuKien" hoặc "DiaGame")
+    var currentType = ViewData["CurrentType"] as string;
+}
+
+@* SỬA Ở ĐÂY: Kiểm tra xem có phải là trang Phụ Kiện HOẶC Đĩa Game không *@
+@if ((currentType == "PhuKien" || currentType == "DiaGame") && ViewData["SubCategories"] is List<Category> subCategories && subCategories.Any())
+{
+    <div class="subcategory-filters">
+        <div class="filter-title">Hãng</div>
+        <div class="filter-list">
+            @* Nút "Tất cả" - Giờ đã dùng biến currentType để tạo link động *@
+            <a asp-controller="Products" asp-action="Index" asp-route-type="@currentType" class="filter-item" data-category="">
+                <img src="/image/your_icons/all.png" alt="Tất cả"> @* Nhớ thay icon của bạn *@
+                <span>Tất cả</span>
+            </a>
+
+            @* Lặp qua các danh mục con (Game PlayStation, Game Xbox...) *@
+            @foreach (var subCat in subCategories)
+            {
+                <a asp-controller="Products" asp-action="Index" asp-route-type="@currentType" asp-route-category="@subCat.Name" class="filter-item" data-category="@subCat.Name">
+                    <img src="/image/your_icons/@(subCat.Name).png" alt="@subCat.Name"> @* Nhớ thay icon của bạn *@
+                    <span>@subCat.Name</span>
+                </a>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,30 @@
+﻿@* BƯỚC 1: Khai báo model mà View sẽ nhận. 
+   Nó là một danh sách các đối tượng Brand *@
+@model IEnumerable<GameStore.Models.Brand>
+
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<div class="contact-page-container">
+    <h1 class="contact-title">@ViewData["Title"]</h1>
+
+    <div class="contact-content">
+        <img src="~/image/contact/logoChillStore.png" alt="Các thương hiệu đối tác" class="brand-banner-img" />
+
+        <div class="contact-intro">
+            <h3>ChillGame</h3>
+            <p>
+                là đơn vị chuyên phân phối và kinh doanh các máy chơi Game của các thương hiệu có tiếng:
+            </p>
+
+            @* BƯỚC 2: Thay thế danh sách tĩnh bằng vòng lặp *@
+            <ul class="brand-list">
+                @foreach (var brand in Model)
+                {
+                    <li>@brand.Name</li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

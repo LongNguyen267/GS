@@ -1,0 +1,51 @@
+﻿/* ----- Trang Liên Hệ (Chữ màu đen) ----- */
+.contact-page-container {
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 30px 40px;
+    background-color: #fff;
+    color: #000; /* <-- Đổi thành màu đen */
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.contact-title {
+    text-align: center;
+    color: #000; /* <-- Đổi thành màu đen */
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+}
+
+.brand-banner-img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 40px;
+}
+
+.contact-intro h3 {
+    color: #000; /* <-- Đổi thành màu đen */
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.contact-intro p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.brand-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+    .brand-list li {
+        font-size: 1.1rem;
+        padding: 12px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+        .brand-list li:last-child {
+            border-bottom: none;
+        }

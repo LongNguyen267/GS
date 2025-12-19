@@ -1,0 +1,48 @@
+﻿@model GameStore.Models.Order
+
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+@* Nạp file CSS riêng cho trang này *@
+@section Styles {
+    <link rel="stylesheet" href="~/css/confirmation-page.css" asp-append-version="true" />
+}
+
+<div class="confirmation-container">
+    @* Icon xác nhận thành công *@
+    <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+
+    @* Tiêu đề chính *@
+    <h1 class="confirmation-title">Cảm ơn bạn đã đặt hàng!</h1>
+
+    @* Lời nhắn xác nhận *@
+    <p class="confirmation-message">
+        Đơn hàng của bạn đã được xác nhận thành công.
+        Một email chi tiết về đơn hàng đã được gửi đến hòm thư của bạn.
+    </p>
+
+    @* Tóm tắt thông tin đơn hàng *@
+    <div class="order-summary">
+        <div class="summary-item">
+            <span>Mã đơn hàng</span>
+            <strong>#@Model.Id.ToString("D6")</strong>
+        </div>
+        <div class="summary-item">
+            <span>Ngày đặt hàng</span>
+            <strong>@Model.OrderDate?.ToString("dd/MM/yyyy")</strong>
+        </div>
+        <div class="summary-item">
+            <span>Tổng tiền</span>
+            <strong>@Model.TotalAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</strong>
+        </div>
+    </div>
+
+    @* Các nút hành động *@
+    <div class="confirmation-actions">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary-outline">Về trang chủ</a>
+        @* Lưu ý: Link này giả định bạn có một trang chi tiết đơn hàng trong tài khoản người dùng *@
+    </div>
+</div>

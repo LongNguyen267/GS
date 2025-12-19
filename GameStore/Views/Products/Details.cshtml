@@ -1,0 +1,164 @@
+﻿@* BƯỚC 1: Khai báo Model mà View này sẽ sử dụng *@
+@model GameStore.ViewModels.ProductDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.MainProduct.Name;
+}
+
+<div class="product-detail-container">
+    <div class="product-images">
+        <div class="thumbnail-list">
+            @* BƯỚC 2: Dùng vòng lặp để hiển thị tất cả ảnh thumbnail *@
+            @foreach (var imageUrl in Model.AllImageUrls)
+            {
+                <img src="@Url.Content("~" + imageUrl)" alt="Thumbnail for @Model.MainProduct.Name" class="thumbnail" onclick="changeImage(this)">
+            }
+        </div>
+        <div class="main-image">
+            @* Hiển thị ảnh chính của sản phẩm *@
+            <img src="@Url.Content("~" + Model.MainImageUrl)" alt="@Model.MainProduct.Name" id="mainProductImage">
+        </div>
+    </div>
+
+    <div class="product-info">
+        @* BƯỚC 3: Hiển thị thông tin chi tiết của sản phẩm *@
+        <h1 class="product-name">@Model.MainProduct.Name</h1>
+
+        <div class="product-rating">
+            @* Dùng vòng lặp để hiển thị số sao đánh giá *@
+            @for (int i = 1; i <= 5; i++)
+            {
+                <span>@(i <= Model.AverageRating ? '⭐' : '☆')</span>
+            }
+            <a href="#reviews" class="review-count">@Model.ReviewCount đánh giá</a>
+        </div>
+
+        <div class="product-price">
+            @Model.MainProduct.Price.ToString("N0")₫
+        </div>
+
+        <div class="product-options">
+            <label>Thương hiệu:</label>
+            <div class="options-group">
+                <button class="option-btn active">@Model.MainProduct.Brand?.Name</button>
+            </div>
+        </div>
+
+        <div class="quantity-selector">
+            <label>Số lượng:</label>
+            <div class="quantity-input">
+                <button class="quantity-btn" id="decrease-qty">-</button>
+                <input type="text" id="quantity-input" value="1" min="1" data-stock="@Model.MainProduct.StockQuantity">
+                <button class="quantity-btn" id="increase-qty">+</button>
+            </div>
+        </div>
+
+        <button type="button" class="add-cart-btn" data-product-id="@Model.MainProduct.Id">
+            <i class="fas fa-shopping-cart"></i> THÊM VÀO GIỎ
+        </button>
+    </div>
+</div>
+
+<div class="product-additional-details container">
+
+    <div class="product-description-full">
+        <h3>Mô tả chi tiết sản phẩm</h3>
+        @Html.Raw(Model.MainProduct.Description)
+    </div>
+
+    <div class="product-specifications">
+        <h3>Thông số kỹ thuật</h3>
+        @Html.Raw(Model.MainProduct.Specifications)
+    </div>
+
+</div>
+
+
+@if (Model.RelatedProducts.Any())
+{
+    <div class="related-products-section">
+        <h2>Sản phẩm liên quan</h2>
+        <div class="related-products-grid">
+            @foreach (var relatedProd in Model.RelatedProducts)
+            {
+                <div class="related-product-card">
+                    <a href="@Url.Action("Details", "Products", new { id = relatedProd.Id })">
+                        <img src="@Url.Content("~" + (relatedProd.ImageUrl ?? "/images/placeholder.png"))" alt="@relatedProd.Name">
+                        <h3>@relatedProd.Name</h3>
+                        <p class="price">@relatedProd.Price.ToString("N0")₫</p>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+}
+@* Khu vực hiển thị các nút tùy chọn/phụ kiện *@
+@if (Model.OptionCategories.Any())
+{
+    <div class="options-section">
+        <h2>Phụ kiện cho @Model.MainProduct.Brand.Name</h2>
+        <div class="options-grid">
+            @foreach (var category in Model.OptionCategories)
+            {
+                <a href="@Url.Action("Index", "Products", new { categoryId = category.Id })" class="option-button">
+                    @category.Name
+                </a>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // BƯỚC 4: Đơn giản hóa JavaScript
+        function changeImage(thumbnailElement) {
+            // Chỉ cần lấy src từ thumbnail được click và gán cho ảnh chính
+            document.getElementById('mainProductImage').src = thumbnailElement.src;
+
+            // Xóa và thêm class 'active' để làm nổi bật thumbnail đang được chọn
+            document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+            thumbnailElement.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Tự động đánh dấu active cho thumbnail đầu tiên khi tải trang
+            const firstThumbnail = document.querySelector('.thumbnail');
+            if(firstThumbnail) {
+                firstThumbnail.classList.add('active');
+            }
+
+            const decreaseBtn = document.getElementById('decrease-qty');
+            const increaseBtn = document.getElementById('increase-qty');
+
+            const quantityInput = document.getElementById('quantity-input');
+
+            const stock = parseInt(quantityInput.getAttribute('data-stock'));
+
+            decreaseBtn.addEventListener('click', function () {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+
+            increaseBtn.addEventListener('click', function () {
+                let currentValue = parseInt(quantityInput.value);
+                // Kiểm tra xem số lượng có vượt quá tồn kho không
+                if (currentValue < stock) {
+                    quantityInput.value = currentValue + 1;
+                } else {
+                    alert('Số lượng đã đạt tối đa trong kho!');
+                }
+            });
+
+            // Xử lý chọn option (giữ nguyên)
+            const optionButtons = document.querySelectorAll('.option-btn');
+            optionButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    optionButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+}
